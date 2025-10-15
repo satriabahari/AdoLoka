@@ -1,6 +1,6 @@
 <footer class="bg-gradient-to-r from-[#006A9A] to-[#114177] text-white rounded-tl-[150px]">
-    <div class="mx-auto py-12 px-32">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+    <div class="mx-auto py-12 max-w-7xl px-24">
+        <div class="grid grid-cols-1 md:grid-cols-[1fr_1.5fr] gap-24">
             <!-- Brand Section -->
             <div class="md:col-span-1">
                 <h3 class="text-2xl font-bold mb-4">AdoLoka</h3>
@@ -10,34 +10,37 @@
                 </p>
             </div>
 
-            <!-- Event Links -->
-            <div>
-                <h4 class="font-semibold text-lg mb-4">Event</h4>
-                <ul class="space-y-2">
-                    <li>
-                        <a href="#" class="text-blue-200 hover:text-white transition text-sm">Event Ongoing</a>
-                    </li>
-                </ul>
-            </div>
+            <div class="flex justify-between w-full">
+                <!-- Event Links -->
+                <div>
+                    <h4 class="font-semibold text-lg mb-4">Event</h4>
+                    <ul class="space-y-2">
+                        <li>
+                            <a href="#" class="text-blue-200 hover:text-white transition text-sm">Event Ongoing</a>
+                        </li>
+                    </ul>
+                </div>
 
-            <!-- UMKM Links -->
-            <div>
-                <h4 class="font-semibold text-lg mb-4">UMKM</h4>
-                <ul class="space-y-2">
-                    <li>
-                        <a href="#" class="text-blue-200 hover:text-white transition text-sm">Produk UMKM</a>
-                    </li>
-                </ul>
-            </div>
+                <!-- UMKM Links -->
+                <div>
+                    <h4 class="font-semibold text-lg mb-4">UMKM</h4>
+                    <ul class="space-y-2">
+                        <li>
+                            <a href="#" class="text-blue-200 hover:text-white transition text-sm">Produk UMKM</a>
+                        </li>
+                    </ul>
+                </div>
 
-            <!-- Member Links -->
-            <div>
-                <h4 class="font-semibold text-lg mb-4">Member</h4>
-                <ul class="space-y-2">
-                    <li>
-                        <a href="#" class="text-blue-200 hover:text-white transition text-sm">Daftar Member</a>
-                    </li>
-                </ul>
+                <!-- Member Links -->
+                <div>
+                    <h4 class="font-semibold text-lg mb-4">Member</h4>
+                    <ul class="space-y-2">
+                        <li>
+                            <a href="#" class="text-blue-200 hover:text-white transition text-sm">Daftar
+                                Member</a>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
 

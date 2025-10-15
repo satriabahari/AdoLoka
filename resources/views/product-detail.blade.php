@@ -50,21 +50,27 @@
                 {{-- Quantity + Buttons --}}
                 <div class="flex items-center gap-3 mb-6">
                     <div class="flex items-center border border-gray-300 rounded-lg">
-                        <button class="px-3 py-2 text-gray-700 font-bold hover:bg-gray-100 transition">−</button>
-                        <input type="text" value="1" readonly
+                        <button id="decrease-qty"
+                            class="px-3 py-2 text-gray-700 font-bold hover:bg-gray-100 transition">−</button>
+                        <input type="number" id="quantity" value="1" min="1" max="{{ $product->stock }}"
                             class="w-10 text-center border-x border-gray-300 text-gray-800 font-semibold">
-                        <button class="px-3 py-2 text-gray-700 font-bold hover:bg-gray-100 transition">+</button>
+                        <button id="increase-qty"
+                            class="px-3 py-2 text-gray-700 font-bold hover:bg-gray-100 transition">+</button>
                     </div>
 
-                    <button
-                        class="bg-blue-800 hover:bg-blue-900  font-semibold px-6 py-2.5 rounded-lg shadow">
+                    <button id="buy-now-btn"
+                        class="bg-blue-800 hover:bg-blue-900 text-white font-semibold px-6 py-2.5 rounded-lg shadow transition disabled:opacity-50 disabled:cursor-not-allowed">
                         BELI SEKARANG
                     </button>
+
                     <button
                         class="border-2 border-blue-800 text-blue-800 font-semibold px-6 py-2.5 rounded-lg hover:bg-blue-50 transition">
                         KERANJANG
                     </button>
                 </div>
+
+                {{-- Alert Messages --}}
+                <div id="alert-container"></div>
             </div>
         </div>
 
@@ -88,4 +94,115 @@
             </div>
         </div>
     </section>
-</x-app-layout>
+
+    {{-- Midtrans Snap Script --}}
+    <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('services.midtrans.client_key') }}">
+    </script>
+
+    <script>
+        // Quantity controls
+        const qtyInput = document.getElementById('quantity');
+        const decreaseBtn = document.getElementById('decrease-qty');
+        const increaseBtn = document.getElementById('increase-qty');
+        const buyNowBtn = document.getElementById('buy-now-btn');
+        const alertContainer = document.getElementById('alert-container');
+
+        decreaseBtn.addEventListener('click', () => {
+            let value = parseInt(qtyInput.value);
+            if (value > 1) {
+                qtyInput.value = value - 1;
+            }
+        });
+
+        increaseBtn.addEventListener('click', () => {
+            let value = parseInt(qtyInput.value);
+            let max = parseInt(qtyInput.max);
+            if (value < max) {
+                qtyInput.value = value + 1;
+            }
+        });
+
+        // Buy Now - Midtrans Integration
+        buyNowBtn.addEventListener('click', async () => {
+            const quantity = parseInt(qtyInput.value);
+
+            if (quantity < 1) {
+                showAlert('Jumlah minimal 1', 'error');
+                return;
+            }
+
+            if (quantity > {{ $product->stock }}) {
+                showAlert('Stok tidak mencukupi', 'error');
+                return;
+            }
+
+            // Disable button
+            buyNowBtn.disabled = true;
+            buyNowBtn.textContent = 'Memproses...';
+
+            try {
+                // Create order and get snap token
+                const response = await fetch('{{ route('order.create', $product) }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        quantity
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Open Midtrans Snap popup
+                    window.snap.pay(data.snap_token, {
+                        onSuccess: function(result) {
+                            window.location.href = '{{ route('order.success') }}?order_id=' + data
+                                .order_id;
+                        },
+                        onPending: function(result) {
+                            window.location.href = '{{ route('order.pending') }}?order_id=' + data
+                                .order_id;
+                        },
+                        onError: function(result) {
+                            window.location.href = '{{ route('order.failed') }}?order_id=' + data
+                                .order_id;
+                        },
+                        onClose: function() {
+                            showAlert('Pembayaran dibatalkan', 'warning');
+                            buyNowBtn.disabled = false;
+                            buyNowBtn.textContent = 'BELI SEKARANG';
+                        }
+                    });
+                } else {
+                    showAlert(data.message, 'error');
+                    buyNowBtn.disabled = false;
+                    buyNowBtn.textContent = 'BELI SEKARANG';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showAlert('Terjadi kesalahan, silakan coba lagi', 'error');
+                buyNowBtn.disabled = false;
+                buyNowBtn.textContent = 'BELI SEKARANG';
+            }
+        });
+
+        function showAlert(message, type) {
+            const alertClass = type === 'error' ? 'bg-red-100 text-red-700' :
+                type === 'warning' ? 'bg-yellow-100 text-yellow-700' :
+                'bg-green-100 text-green-700';
+
+            alertContainer.innerHTML = `
+                <div class="${alertClass} px-4 py-3 rounded-lg mb-4">
+                    ${message}
+                </div>
+            `;
+
+            setTimeout(() => {
+                alertContainer.innerHTML = '';
+            }, 5000);
+        }
+    </script>
+</x-app-layout>s
