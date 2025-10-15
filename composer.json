@@ -7,6 +7,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "blade-ui-kit/blade-heroicons": "^2.6",
         "blade-ui-kit/blade-icons": "^1.8",
         "davidhsianturi/blade-bootstrap-icons": "^2.1",
         "laravel/framework": "^12.0",
@@ -14,6 +15,7 @@
         "laravel/tinker": "^2.10.1",
         "livewire/livewire": "^3.6.4",
         "livewire/volt": "^1.7.0",
+        "midtrans/midtrans-php": "^2.3",
         "spatie/laravel-medialibrary": "^11.15"
     },
     "require-dev": {
