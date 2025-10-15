@@ -1,14 +1,15 @@
-<div class="bg-white py-16">
-    <div class="container mx-auto px-4">
-        <h2 class="text-3xl md:text-4xl font-bold text-teal-600 mb-12 text-center md:text-left">
+<div class="bg-white py-16 px-8">
+    <div class="container mx-auto">
+        <h2
+            class="text-3xl  font-bold bg-gradient-to-r from-[#114177] via-[#006A9A] to-[#17A18A] bg-clip-text text-transparent mb-12 text-center md:text-left">
             Mengapa Harus Adoloka?
         </h2>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
             <!-- Certificate Image -->
             <div class="order-2 lg:order-1">
-                <div class="bg-white rounded-xl shadow-lg p-4">
-                    <img src="/api/placeholder/500/600" alt="Sertifikat" class="w-full rounded-lg">
+                <div class="bg-white rounded-3xl shadow-lg p-2">
+                    <img src="sertifikat.png" alt="Sertifikat" class="w-full rounded-lg">
                 </div>
             </div>
 

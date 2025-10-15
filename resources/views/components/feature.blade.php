@@ -1,5 +1,5 @@
-<div class="bg-white py-16">
-    <div class="container mx-auto px-4">
+<div class="bg-white py-16 px-8">
+    <div class="container ">
         <!-- Warning Box -->
         <div class="mb-8">
             <h3
@@ -14,7 +14,7 @@
         </div>
 
         <!-- Features Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mx-auto">
 
             <!-- Feature Card 1 - span 2 column -->
             <div
