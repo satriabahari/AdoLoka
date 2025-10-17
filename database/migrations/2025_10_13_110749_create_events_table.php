@@ -15,13 +15,13 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->string('slug')->unique();
-            $table->text('description'); //bisa di tambahkan nullable
-            $table->string('location'); //bisa di tambahkan nullable
+            $table->text('description');
+            $table->string('location');
             $table->date('start_date')->index();
             $table->date('end_date')->index();
             $table->enum('type', ["mingguan", "tahunan"])->index();
             $table->enum('category', ["UMKM Kuliner", "UMKM Perkebunan"])->index();
-            $table->boolean('is_strategic_location')->default(false);
+            $table->boolean('is_strategic_location')->default(true);
             $table->timestamps();
         });
     }
