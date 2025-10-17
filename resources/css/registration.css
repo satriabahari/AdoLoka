@@ -1,0 +1,77 @@
+/* resources/css/registration.css */
+body {
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+}
+
+.illustration-wrapper {
+    background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 50%, #3b82f6 100%);
+    position: relative;
+    overflow: hidden;
+}
+.illustration-wrapper::before {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(
+        circle,
+        rgba(255, 255, 255, 0.1) 0%,
+        transparent 70%
+    );
+    animation: pulse 15s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%,
+    100% {
+        transform: scale(1) rotate(0deg);
+    }
+    50% {
+        transform: scale(1.1) rotate(5deg);
+    }
+}
+
+.floating {
+    animation: floating 3s ease-in-out infinite;
+}
+@keyframes floating {
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-20px);
+    }
+}
+
+.slide-in {
+    animation: slideIn 0.5s ease-out;
+}
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Progress bar */
+.progress-step {
+    position: relative;
+    z-index: 10;
+}
+.progress-step .step-circle {
+    transition: all 0.3s;
+}
+.progress-step.active .step-circle {
+    @apply bg-primary-dark border-primary-dark text-white;
+}
+.progress-step.completed .step-circle {
+    @apply bg-primary border-primary text-white;
+}
