@@ -22,16 +22,27 @@ Route::get('events', [EventController::class, 'index'])
 Route::get('events/{event}', [EventController::class, 'show'])
     ->name('events.show');
 
-Route::get('products', [ProductController::class, 'index'])
-    ->middleware(['auth', 'verified'])
-    ->name('products');
+// Route::get('products', [ProductController::class, 'index'])
+//     ->middleware(['auth', 'verified'])
+//     ->name('products');
 
-Route::get('products/{product}', [ProductController::class, 'show'])
-    ->name('products.show');
+// Route::get('products/{product}', [ProductController::class, 'show'])
+//     ->name('products.show');
 
-Route::get('services', [ServiceController::class, 'index'])
-    ->middleware(['auth', 'verified'])
-    ->name('services');
+// Product Routes
+Route::get('/products', [ProductController::class, 'index'])->name('products.index');
+Route::get('/products/{product:slug}', [ProductController::class, 'show'])->name('products.show');
+
+// Product Payment Routes
+Route::post('/products/{product:slug}/payment', [ProductController::class, 'createPayment'])
+    ->name('products.payment.create');
+Route::get('/products/payment/status/{orderNumber}', [ProductController::class, 'paymentStatus'])
+    ->name('products.payment.status');
+Route::post('/products/payment/callback', [ProductController::class, 'paymentCallback'])
+    ->name('products.payment.callback');
+
+Route::get('/services', [ServiceController::class, 'index'])->name('services.index');
+Route::get('/services/{service}', [ServiceController::class, 'show'])->name('services.show');
 
 Route::middleware(['auth'])->group(function () {
     Route::post('/order/create/{product}', [OrderController::class, 'createOrder'])->name('order.create');
@@ -42,6 +53,12 @@ Route::middleware(['auth'])->group(function () {
 });
 
 Route::post('/midtrans/callback', [OrderController::class, 'callback'])->name('midtrans.callback');
+
+// Payment Routes
+Route::post('/payment/create/{service}', [PaymentController::class, 'createOrder'])->name('payment.create');
+Route::post('/payment/notification', [PaymentController::class, 'notification'])->name('payment.notification');
+Route::get('/payment/finish', [PaymentController::class, 'finish'])->name('payment.finish');
+Route::get('/payment/status/{orderNumber}', [PaymentController::class, 'status'])->name('payment.status');
 
 Route::get('/profile/test', Profile::class)
     ->middleware(['auth'])
