@@ -82,10 +82,6 @@
                         Berikut ada banyak pertanyaan yang sering diajukan beserta jawabannya.
                     </p>
                 </div>
-                <button
-                    class="bg-gradient-to-r from-sky-500 to-sky-600 hover:from-sky-600 hover:to-sky-700 text-white font-semibold px-8 py-3 rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105">
-                    Daftar Member
-                </button>
             </div>
 
             <!-- FAQ Section -->

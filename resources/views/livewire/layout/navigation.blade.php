@@ -181,13 +181,13 @@ new class extends Component {
                 </div>
 
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('products')" :active="request()->routeIs('products')" wire:navigate>
+                    <x-nav-link :href="route('products.index')" :active="request()->routeIs('products.index')" wire:navigate>
                         {{ __('UMKM') }}
                     </x-nav-link>
                 </div>
 
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('services')" :active="request()->routeIs('services')" wire:navigate>
+                    <x-nav-link :href="route('services.index')" :active="request()->routeIs('services.index')" wire:navigate>
                         {{ __('Services') }}
                     </x-nav-link>
                 </div>
@@ -262,10 +262,10 @@ new class extends Component {
             <x-responsive-nav-link :href="route('events')" :active="request()->routeIs('events')" wire:navigate>
                 {{ __('Events') }}
             </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('products')" :active="request()->routeIs('products')" wire:navigate>
+            <x-responsive-nav-link :href="route('products.index')" :active="request()->routeIs('products.index')" wire:navigate>
                 {{ __('UMKM') }}
             </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('services')" :active="request()->routeIs('services')" wire:navigate>
+            <x-responsive-nav-link :href="route('services.index')" :active="request()->routeIs('services.index')" wire:navigate>
                 {{ __('Services') }}
             </x-responsive-nav-link>
 
