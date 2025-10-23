@@ -4,6 +4,7 @@ namespace App\Livewire\Profile;
 
 use App\Models\Product;
 use App\Models\Category;
+use App\Models\ProductCategory;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -137,7 +138,7 @@ class UpdateProductInformation extends Component
             ->get();
 
         // Load categories
-        $categories = Category::all();
+        $categories = ProductCategory::all();
 
         return view('livewire.profile.update-product-information', [
             'products' => $products,

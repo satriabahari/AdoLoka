@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use App\Models\Category;
+use App\Models\ProductCategory;
 use App\Models\ProductOrder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -16,7 +17,7 @@ class ProductController extends Controller
 {
     public function index(Request $request)
     {
-        $categories = Category::withCount('products')->get();
+        $categories = ProductCategory::withCount('products')->get();
 
         $query = Product::with(['category', 'umkm'])
             ->where('is_active', true)

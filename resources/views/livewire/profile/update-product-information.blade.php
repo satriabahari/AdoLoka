@@ -14,7 +14,7 @@
     <div
         class="rounded-2xl bg-white/95 backdrop-blur ring-1 ring-gray-200 shadow-[0_16px_40px_rgba(17,65,119,0.15)] p-3 md:p-4">
         <div class="flex items-center justify-between mb-4">
-            <h3 class="text-xl font-semibold text-gray-900">Produk atau Jasa</h3>
+            <h3 class="text-xl font-semibold text-gray-900">Produk</h3>
         </div>
 
         <!-- Product List dengan Scroll -->
@@ -46,7 +46,7 @@
         <!-- Tombol Tambah Product -->
         <button wire:click="openModal"
             class="w-full py-3 rounded-lg bg-sky-600 hover:bg-sky-700 text-white font-medium transition">
-            + Tambah Product
+            + Tambah Produk
         </button>
     </div>
 
