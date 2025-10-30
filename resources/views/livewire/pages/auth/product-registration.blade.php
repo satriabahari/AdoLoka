@@ -3,7 +3,7 @@
     <p class="text-gray-600 mb-8">Registrasi akun untuk UMKM (Informasi Jenis Usaha)</p>
 
     <form wire:submit.prevent="submit" class="space-y-5">
-        <!-- Product Name & Type -->
+        <!-- Product Name & Category -->
         <div class="grid grid-cols-2 gap-4">
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Nama Produk</label>
@@ -13,31 +13,21 @@
                     <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span>
                 @enderror
             </div>
+
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Jenis Produk</label>
-                <input type="text" wire:model.defer="product_type" placeholder="Makanan"
+                <label class="block text-sm font-medium text-gray-700 mb-2">Kategori Produk</label>
+                <select wire:model.defer="product_category_id"
                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition">
-                @error('product_type')
+                    <option value="" hidden>-- Pilih Kategori --</option>
+                    @foreach ($productCategories as $category)
+                        <option value="{{ $category['id'] }}">{{ $category['name'] }}</option>
+                    @endforeach
+                </select>
+                @error('product_category_id')
                     <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span>
                 @enderror
             </div>
         </div>
-
-        <!-- Category -->
-        <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Kategori</label>
-            <select wire:model.defer="product_category"
-                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition">
-                <option value="">-- Pilih Kategori --</option>
-                @foreach ($categories as $cat)
-                    <option value="{{ $cat['id'] }}">{{ $cat['name'] }}</option>
-                @endforeach
-            </select>
-            @error('product_category')
-                <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span>
-            @enderror
-        </div>
-
 
         <!-- City (readonly) -->
         <div>
@@ -131,6 +121,11 @@
 
         <!-- Buttons -->
         <div class="flex gap-3 pt-4">
+            <button type="button" wire:click="previousStep"
+                class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-3.5 rounded-lg transition duration-200 shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+                wire:loading.attr="disabled" wire:target="submit">
+                <i class="fas fa-arrow-left mr-2"></i>Kembali
+            </button>
             <button type="submit"
                 class="flex-1 bg-primary hover:bg-primary-hover text-white font-semibold py-3.5 rounded-lg transition duration-200 shadow-sm hover:shadow-md flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
                 wire:loading.attr="disabled" wire:target="submit">
@@ -149,16 +144,12 @@
                     Processing...
                 </span>
             </button>
-            <button type="button" wire:click="previousStep"
-                class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-3.5 rounded-lg transition duration-200 shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
-                wire:loading.attr="disabled" wire:target="submit">
-                <i class="fas fa-arrow-left mr-2"></i>Kembali
-            </button>
         </div>
 
         <!-- Login Link -->
         <p class="text-center text-sm text-gray-600 pt-2">
-            Already have an account? <a href="/login" class="text-primary hover:text-primary-hover font-medium">Login</a>
+            Already have an account? <a href="/login"
+                class="text-primary hover:text-primary-hover font-medium">Login</a>
         </p>
     </form>
 </div>

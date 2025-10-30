@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\ProductCategory;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 
@@ -17,7 +18,7 @@ class FilterProducts extends Component
 
     public function getCategoriesProperty()
     {
-        return Category::orderBy('name')->get(['id', 'name', 'slug']);
+        return ProductCategory::orderBy('name')->get(['id', 'name', 'slug']);
     }
 
     public function render()

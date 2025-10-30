@@ -17,7 +17,11 @@ class ProductController extends Controller
 {
     public function index(Request $request)
     {
-        $categories = ProductCategory::withCount('products')->get();
+        // Update query categories: hanya hitung produk dengan stok > 0 dan is_active = true
+        $categories = ProductCategory::withCount(['products' => function ($query) {
+            $query->where('is_active', true)
+                ->where('stock', '>', 0);
+        }])->get();
 
         $query = Product::with(['category', 'umkm'])
             ->where('is_active', true)
