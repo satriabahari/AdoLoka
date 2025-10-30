@@ -21,7 +21,7 @@
 
 <body class="font-sans antialiased">
     <div class="min-h-screen bg-white">
-        <livewire:layout.navigation />
+        <livewire:layout.navigation :key="auth()->id() ?? 'guest'" />
 
         <!-- Page Heading -->
         @if (isset($header))
@@ -33,7 +33,7 @@
         @endif
 
         <!-- Page Content -->
-        <main class="py-16 px-12">
+        <main class="py-16 md:px-12">
             {{ $slot }}
         </main>
 

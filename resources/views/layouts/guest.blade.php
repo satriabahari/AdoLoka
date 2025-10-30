@@ -18,11 +18,11 @@
 </head>
 
 <body class="font-sans text-gray-900 antialiased">
-        <livewire:layout.navigation />
-    
+    <livewire:layout.navigation />
 
-    <div class="min-h-screen max-w-7xl m-auto flex sm:justify-center items-center pt-6 sm:pt-0 bg-white pr-12">
-        <div class="w-full mt-6 px-6 py-4 bg-white overflow-hidden sm:rounded-lg">
+
+    <div class="min-h-screen max-w-7xl m-auto flex sm:justify-center items-center bg-white">
+        <div class="w-full py-16 px-12 bg-white overflow-hidden sm:rounded-lg">
             {{ $slot }}
         </div>
     </div>
