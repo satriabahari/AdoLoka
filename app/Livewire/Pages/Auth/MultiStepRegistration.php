@@ -6,6 +6,8 @@ use App\Models\Product;
 use App\Models\Umkm;
 use App\Models\User;
 use App\Models\Category;
+use App\Models\EventAndUmkmCategory;
+use App\Models\ProductCategory;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Livewire\Attributes\Layout;
@@ -31,26 +33,25 @@ class MultiStepRegistration extends Component
 
     // Step 2: UMKM data
     public $business_name = '';
-    public $business_type = '';
+    public $umkm_category_id  = '';
     public $city = '';
     public $latitude;
     public $longitude;
     public $business_description = '';
+    public $umkmCategories = [];
 
     // Step 3: Product data
     public $product_name = '';
-    public $product_type = '';
+    public $product_category_id  = '';
     public $product_photo;
     public $product_description = '';
-    public $product_category = '';
-    public $categories = [];
+    public $productCategories = [];
 
     // Track if user came from Google
     public $fromGoogle = false;
 
     protected $messages = [
         'first_name.required' => 'Nama depan wajib diisi',
-        'last_name.required' => 'Nama belakang wajib diisi',
         'email.required' => 'Email wajib diisi',
         'email.email' => 'Format email tidak valid',
         'email.unique' => 'Email sudah terdaftar',
@@ -61,14 +62,14 @@ class MultiStepRegistration extends Component
         'password.confirmed' => 'Konfirmasi password tidak cocok',
         'agree_terms.accepted' => 'Anda harus menyetujui syarat dan ketentuan',
         'business_name.required' => 'Nama usaha wajib diisi',
-        'business_type.required' => 'Jenis usaha wajib diisi',
+        'umkm_category_id.required' => 'Kategori usaha wajib dipilih',
+        'umkm_category_id.exists'   => 'Kategori usaha tidak valid',
         'city.required' => 'Kota wajib diisi',
         'product_name.required' => 'Nama produk wajib diisi',
-        'product_type.required' => 'Jenis produk wajib diisi',
         'product_photo.image' => 'File harus berupa gambar',
         'product_photo.max' => 'Ukuran gambar maksimal 2MB',
-        'product_category.required' => 'Kategori produk wajib dipilih',
-        'product_category.exists'   => 'Kategori tidak valid',
+        'product_category_id.required' => 'Kategori produk wajib dipilih',
+        'product_category_id.exists'   => 'Kategori produk tidak valid',
     ];
 
     public function mount()
@@ -99,7 +100,14 @@ class MultiStepRegistration extends Component
             $this->currentStep = 1;
         }
 
-        $this->categories = Category::select('id', 'name')
+        // daftar kategori produk
+        $this->productCategories = ProductCategory::select('id', 'name')
+            ->orderBy('name')
+            ->get()
+            ->toArray();
+
+        // daftar kategori UMKM (diambil dari EventAndUmkmCategory)
+        $this->umkmCategories = EventAndUmkmCategory::select('id', 'name')
             ->orderBy('name')
             ->get()
             ->toArray();
@@ -110,7 +118,7 @@ class MultiStepRegistration extends Component
     {
         $rules = [
             'first_name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
+            'last_name' => 'nullable|string|max:255',
             'email' => 'required|email|unique:users,email',
             'phone_number' => [
                 'required',
@@ -134,7 +142,7 @@ class MultiStepRegistration extends Component
     {
         return [
             'business_name' => 'required|string|max:255',
-            'business_type' => 'required|string|max:255',
+            'umkm_category_id'   => 'required|exists:event_and_umkm_categories,id',
             'city' => 'required|string|max:255',
             'latitude' => 'nullable|numeric',
             'longitude' => 'nullable|numeric',
@@ -146,8 +154,7 @@ class MultiStepRegistration extends Component
     {
         return [
             'product_name' => 'required|string|max:255',
-            'product_type' => 'required|string|max:255',
-            'product_category'  => 'required|exists:categories,id',
+            'product_category_id' => 'required|integer|exists:product_categories,id',
             'product_photo' => 'nullable|image|max:2048',
         ];
     }
@@ -194,9 +201,11 @@ class MultiStepRegistration extends Component
             }
         } else {
             // Create new user (regular registration)
+            $last = trim((string) $this->last_name);
             $user = User::create([
                 'first_name' => $this->first_name,
-                'last_name' => $this->last_name,
+                'last_name'    => $last === '' ? null : $last,
+                'role_id' => 2,
                 'email' => $this->email,
                 'phone_number' => $this->phone_number,
                 'password' => Hash::make($this->password),
@@ -209,8 +218,8 @@ class MultiStepRegistration extends Component
         // Create UMKM
         $umkm = Umkm::create([
             'user_id' => $user->id,
-            'business_name' => $this->business_name,
-            'business_type' => $this->business_type,
+            'name' => $this->business_name,
+            'category_id' => $this->umkm_category_id,
             'city' => $this->city,
             'latitude' => $this->latitude,
             'longitude' => $this->longitude,
@@ -220,11 +229,10 @@ class MultiStepRegistration extends Component
         // Create Product
         $product = Product::create([
             'umkm_id' => $umkm->id,
-            'user_id'     => $user->id,
+            'user_id' => $user->id,
             'name' => $this->product_name,
-            'type' => $this->product_type,
             'description' => $this->product_description,
-            'category_id' => $this->product_category,
+            'category_id' => $this->product_category_id,
         ]);
 
         // Upload product photo using Spatie Media Library

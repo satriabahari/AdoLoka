@@ -54,8 +54,9 @@
             <div class="bg-white rounded-2xl shadow-2xl overflow-hidden">
                 <div class="flex flex-col lg:flex-row min-h-[600px]">
                     <!-- Illustration Section -->
-                    <div class="lg:w-1/2 illustration-wrapper p-8 lg:p-12 relative">
-                        <div class="relative z-10 h-full flex flex-col justify-center">
+                    <div
+                        class="lg:w-1/2 p-8 flex flex-col justify-center items-center text-center bg-gradient-to-br from-primary to-primary-dark">
+                        {{-- <div class="relative z-10 h-full flex flex-col justify-center">
                             <!-- Decorative elements -->
                             <div class="absolute top-10 left-10 w-20 h-20 bg-primary rounded-full opacity-30 floating"
                                 style="animation-delay: 0s;"></div>
@@ -266,6 +267,13 @@
                                 <p class="text-blue-100 text-sm">Daftarkan UMKM Anda dan jangkau lebih banyak pelanggan
                                 </p>
                             </div>
+                        </div> --}}
+                        <img src="{{ asset('images/register.svg') }}" alt="Ilustrasi" class="w-96">
+                        <div class="flex flex-col justify-center text-white mt-8">
+                            <h2 class="text-3xl font-bold mb-2">Bergabung Bersama Kami!</h2>
+                            <p class="text-white/90">Daftar untuk mulai mengelola UMKM, event, dan produk Anda secara
+                                mudah.</p>
+
                         </div>
                     </div>
 
