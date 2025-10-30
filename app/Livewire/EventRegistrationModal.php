@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Models\EventAndUmkmCategory;
 use App\Models\EventCategory;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -44,7 +45,7 @@ class EventRegistrationModal extends Component
     public function mount($event)
     {
         $this->event = $event;
-        $this->categories = EventCategory::orderBy('name')->get();
+        $this->categories = EventAndUmkmCategory::orderBy('name')->get();
     }
 
     public function openModal()

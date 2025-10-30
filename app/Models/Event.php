@@ -36,7 +36,12 @@ class Event extends Model implements HasMedia
 
     public function categories()
     {
-        return $this->belongsToMany(EventCategory::class, 'category_event');
+        return $this->belongsToMany(
+            EventAndUmkmCategory::class,
+            'category_event',    // nama tabel pivot
+            'event_id',          // foreignPivotKey: kolom yg mengacu ke events
+            'category_id'        // relatedPivotKey: kolom yg mengacu ke event_and_umkm_categories
+        );
     }
 
     // Gunakan slug untuk route model binding

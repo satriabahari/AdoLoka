@@ -29,7 +29,7 @@ class EventRegistration extends Model implements HasMedia
 
     public function eventCategory()
     {
-        return $this->belongsTo(EventCategory::class);
+        return $this->belongsTo(EventAndUmkmCategory::class);
     }
 
     // === MEDIA LIBRARY ===
