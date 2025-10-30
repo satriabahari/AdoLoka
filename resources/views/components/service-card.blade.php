@@ -2,7 +2,7 @@
     <div class="bg-white rounded-2xl p-8 max-w-4xl mx-auto shadow-xl border border-sky-100">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- Branding Card -->
-            <div
+            <a href="{{ route('services.index') }}"
                 class="relative overflow-hidden rounded-xl group cursor-pointer transform transition-all duration-300 hover:-translate-y-2">
                 <img src="/images/home/branding.jpg" alt="Branding"
                     class="w-full h-48 object-cover transition duration-500 group-hover:scale-110">
@@ -15,10 +15,10 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                     </svg>
                 </div>
-            </div>
+            </a>
 
             <!-- Promosi Card -->
-            <div
+            <a href="{{ route('services.index') }}"
                 class="relative overflow-hidden rounded-xl group cursor-pointer transform transition-all duration-300 hover:-translate-y-2">
                 <img src="/images/home/promosi.jpg" alt="Promosi"
                     class="w-full h-48 object-cover transition duration-500 group-hover:scale-110">
@@ -31,7 +31,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                     </svg>
                 </div>
-            </div>
+            </a>
         </div>
     </div>
 </div>

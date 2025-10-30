@@ -24,8 +24,25 @@
                 <!-- Category Header -->
                 <div class="flex items-center justify-between mb-6">
                     <h2 class="text-2xl font-bold text-slate-800">{{ $category->name }}</h2>
-                    @if ($category->services->count() > 3)
-                        <div class="flex gap-2">
+                    @php
+                        $serviceCount = $category->services->count();
+                        // Show buttons if: mobile (>1 services) OR desktop (>3 services)
+                        $showButtonsMobile = $serviceCount > 1; // Show on mobile if > 1
+                        $showButtonsDesktop = $serviceCount > 3; // Show on desktop if > 3
+
+                        if ($showButtonsMobile && $showButtonsDesktop) {
+                            $buttonClass = 'flex'; // Show on all screens
+                        } elseif ($showButtonsMobile && !$showButtonsDesktop) {
+                            $buttonClass = 'flex lg:hidden'; // Show only on mobile
+                        } elseif (!$showButtonsMobile && $showButtonsDesktop) {
+                            $buttonClass = 'hidden lg:flex'; // Show only on desktop
+                        } else {
+                            $buttonClass = 'hidden'; // Hide on all screens
+                        }
+                    @endphp
+
+                    @if ($showButtonsMobile || $showButtonsDesktop)
+                        <div class="gap-2 {{ $buttonClass }}">
                             <button onclick="scrollContainer('{{ $category->slug }}', -1)"
                                 class="p-2 rounded-full bg-white shadow-md hover:bg-sky-50 transition-colors">
                                 <svg class="w-5 h-5 text-sky-600" fill="none" stroke="currentColor"

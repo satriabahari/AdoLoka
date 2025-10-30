@@ -98,6 +98,28 @@ class ServiceSeeder extends Seeder
                 'delivery_days_max' => 2,
                 'has_brand_identity' => true,
             ],
+            [
+                'name' => 'Fotografer Profesional',
+                'description' => 'Fotografer profesional untuk katalog produk UMKM.',
+                'price' => 100000,
+                'category' => 'Promosi',
+                'image' => 'service-1.jpg',
+                'revision_max' => 2,
+                'delivery_days_min' => 1,
+                'delivery_days_max' => 2,
+                'has_brand_identity' => true,
+            ],
+            [
+                'name' => 'Writer Profesional',
+                'description' => 'Writer profesional untuk katalog produk UMKM.',
+                'price' => 50000,
+                'category' => 'Promosi',
+                'image' => 'service-2.jpg',
+                'revision_max' => 4,
+                'delivery_days_min' => 1,
+                'delivery_days_max' => 4,
+                'has_brand_identity' => true,
+            ],
         ];
 
         // --- 5. Simpan layanan branding ---
