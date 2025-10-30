@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -41,16 +40,18 @@ class GoogleAuthController extends Controller
                 // Split name into first and last name
                 $nameParts = explode(' ', $googleUser->name, 2);
                 $firstName = $nameParts[0];
-                $lastName = isset($nameParts[1]) ? $nameParts[1] : '';
+                $lastName = $nameParts[1] ?? null;
 
                 // Create new user
                 $user = User::create([
                     'first_name' => $firstName,
                     'last_name' => $lastName,
+                    'about' => null,
                     'email' => $googleUser->email,
                     'google_id' => $googleUser->id,
-                    'phone_number' => '', // Will be filled in step 1 if needed
-                    'password' => Hash::make(Str::random(24)), // Random password
+                    'phone_number' => null,
+                    'password' => Hash::make(Str::random(24)),
+                    'role_id' => 2,
                     'email_verified_at' => now(),
                 ]);
             }
@@ -65,7 +66,7 @@ class GoogleAuthController extends Controller
             }
 
             // Otherwise redirect to dashboard
-            return redirect()->route('dashboard');
+            return redirect()->route('home');
         } catch (\Exception $e) {
             return redirect()->route('register')->with('error', 'Unable to login with Google. Please try again.');
         }

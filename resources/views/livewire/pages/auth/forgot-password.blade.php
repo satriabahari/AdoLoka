@@ -33,8 +33,7 @@ new #[Layout('layouts.guest')] class extends Component {
     }
 }; ?>
 
-<div
-    class="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50 px-4 sm:px-6 lg:px-8">
+<div class="min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8">
     <div class="max-w-md w-full space-y-8">
         <!-- Header Section -->
         <div class="text-center">

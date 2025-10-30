@@ -1,68 +1,3 @@
-{{-- <div x-data="{ openFaq: null }" class="bg-white py-16 px-16">
-    <div class="container px-4">
-        <div class="w-full flex justify-between flex-col md:flex-row gap-8">
-            <!-- Left Section -->
-            <div>
-                <div class="mb-12 w-96 max-w-full">
-                    <h3
-                        class="text-sm font-semibold bg-gradient-to-r from-[#114177] via-[#006A9A] to-[#17A18A] bg-clip-text text-transparent mb-2">
-                        FAQ
-                    </h3>
-                    <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
-                        Pertanyaan Yang Sering
-                        <span
-                            class="bg-gradient-to-r from-[#114177] via-[#006A9A] to-[#17A18A] bg-clip-text text-transparent">
-                            Ditanyakan
-                        </span>
-                    </h2>
-                    <p class="text-gray-600">
-                        Berikut ada banyak pertanyaan yang sering diajukan beserta jawabannya.
-                    </p>
-                </div>
-                <button
-                    class="bg-gradient-to-r from-[#114177] via-[#006A9A] to-[#17A18A] text-white font-semibold px-8 py-3 rounded-lg transition duration-300 shadow-lg">
-                    Daftar Member
-                </button>
-            </div>
-
-            <!-- FAQ Section -->
-            <div class="space-y-4 md:w-1/2">
-                <!-- Template FAQ Item -->
-                <template
-                    x-for="(faq, index) in [
-                    { question: 'Apa keunggulan GatesflycliAction payment gateway Paywin?', answer: 'GatesflycliAction menawarkan proses pembayaran cepat, aman, dan mendukung berbagai metode pembayaran lokal maupun internasional.' },
-                    { question: 'Berapa biaya menggunakan GatesPay?', answer: 'GatesPay memiliki biaya transaksi kompetitif yang disesuaikan dengan volume dan jenis transaksi Anda.' },
-                    { question: 'Apakah GatesPay aman?', answer: 'Ya, GatesPay menggunakan enkripsi SSL dan sertifikasi keamanan PCI DSS Level 1.' },
-                    { question: 'Saya masih ada pertanyaan', answer: 'Silakan hubungi tim dukungan kami melalui halaman kontak untuk mendapatkan bantuan lebih lanjut.' }
-                ]"
-                    :key="index">
-                    <div
-                        class="bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition duration-300">
-                        <button @click="openFaq === index ? openFaq = null : openFaq = index"
-                            class="w-full px-6 py-4 flex items-center justify-between text-left">
-                            <span class="font-semibold text-gray-900" x-text="faq.question"></span>
-                            <svg :class="{ 'rotate-90 text-[#006A9A]': openFaq === index }"
-                                class="w-5 h-5 text-gray-500 flex-shrink-0 ml-4 transition-transform duration-300"
-                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 5l7 7-7 7" />
-                            </svg>
-                        </button>
-
-                        <!-- Answer -->
-                        <div x-show="openFaq === index" x-collapse class="px-6 pb-4 text-gray-600">
-                            <p x-text="faq.answer"></p>
-                        </div>
-                    </div>
-                </template>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Tambahkan Alpine.js jika belum -->
-<script src="//unpkg.com/alpinejs" defer></script> --}}
-
 <div x-data="{ openFaq: null }" class="bg-gradient-to-b from-white to-sky-50 py-16 px-8 md:px-16">
     <div class="container mx-auto px-4">
         <div class="w-full flex justify-between flex-col md:flex-row gap-12">
@@ -209,9 +144,6 @@
         </div>
     </div>
 </div>
-
-<!-- Tambahkan Alpine.js jika belum -->
-<script src="//unpkg.com/alpinejs" defer></script>
 
 <style>
     @keyframes slideInLeft {
