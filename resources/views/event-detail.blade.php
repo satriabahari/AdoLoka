@@ -1,4 +1,8 @@
 <x-app-layout>
+    {{-- Leaflet CSS --}}
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+
     <div class="max-w-6xl mx-auto pt-12">
         <button onclick="window.history.back()"
             class="flex items-center gap-2 text-sky-600 hover:text-sky-700 transition-colors mb-8 animate-fade-in">
@@ -50,7 +54,6 @@
                 <div class="lg:col-span-2 space-y-8">
                     {{-- Event Info Card --}}
                     <div class="bg-white rounded-2xl shadow-sm ring-1 ring-slate-100 p-6 md:p-8">
-                        {{-- <div class="flex items-start justify-between mb-6"> --}}
                         <div>
                             <h2 class="text-3xl font-bold text-sky-900 mb-2">{{ $event->title }}</h2>
                             <div class="flex items-center gap-2 text-slate-600">
@@ -61,10 +64,8 @@
                                 <span class="font-medium">{{ $event->date_range }}</span>
                             </div>
                         </div>
-                        {{-- @livewire('event-registration-modal', ['event' => $event]) --}}
-                        {{-- </div> --}}
 
-                        <div class="prose prose-slate max-w-none">
+                        <div class="prose prose-slate max-w-none mt-6">
                             <h3 class="text-lg font-semibold text-slate-900 mb-3">Tentang Event</h3>
                             <p class="text-slate-600 leading-relaxed">{{ $event->description }}</p>
                         </div>
@@ -149,25 +150,23 @@
                             </div>
                             <div>
                                 <h3 class="text-xl font-bold text-slate-900">Lokasi Event</h3>
-                                <p class="text-slate-600 mt-1">{{ $event->location }}</p>
-                                <a href="https://www.google.com/maps/search/?api=1&query={{ urlencode($event->location) }}"
-                                    target="_blank"
-                                    class="inline-flex items-center gap-1 text-sm text-sky-600 hover:text-sky-700 font-medium mt-2">
-                                    Buka di Google Maps
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                                    </svg>
-                                </a>
+                                <p class="text-slate-600 mt-1">{{ $event->title }}</p>
+                                @if($event->latitude && $event->longitude)
+                                    <a href="https://www.google.com/maps/search/?api=1&query={{ $event->latitude }},{{ $event->longitude }}"
+                                        target="_blank"
+                                        class="inline-flex items-center gap-1 text-sm text-sky-600 hover:text-sky-700 font-medium mt-2">
+                                        Buka di Google Maps
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                        </svg>
+                                    </a>
+                                @endif
                             </div>
                         </div>
 
                         <div class="rounded-xl overflow-hidden shadow-lg ring-1 ring-slate-200">
-                            <iframe class="w-full h-[400px]"
-                                src="https://maps.google.com/maps?q={{ urlencode($event->location) }}&t=&z=15&ie=UTF8&iwloc=&output=embed"
-                                style="border:0;" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
-                                allowfullscreen>
-                            </iframe>
+                            <div id="event-map" class="w-full h-[400px]"></div>
                         </div>
                     </div>
                 </div>
@@ -230,9 +229,10 @@
                                     <div class="flex items-start gap-3">
                                         <div
                                             class="flex-shrink-0 w-10 h-10 rounded-lg bg-sky-100 flex items-center justify-center">
-                                            <svg class="w-5 h-5 text-sky-600" fill="none" stroke="currentColor"
-                                                viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            <svg class="w-5 h-5 text-sky-600" fill="none"
+                                                stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    stroke-width="2"
                                                     d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                                             </svg>
                                         </div>
@@ -255,4 +255,109 @@
             </div>
         </section>
     </div>
+
+    {{-- Leaflet JS & Script --}}
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Data dari Laravel
+            const eventTitle = @json($event->title);
+            const eventLat = {{ $event->latitude ?? '-1.6101' }};
+            const eventLng = {{ $event->longitude ?? '103.6131' }};
+
+            // Inisialisasi map
+            const map = L.map('event-map').setView([eventLat, eventLng], 15);
+
+            // Tambahkan tile layer (OpenStreetMap)
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+                maxZoom: 19
+            }).addTo(map);
+
+            // Custom icon untuk marker
+            const customIcon = L.divIcon({
+                className: 'custom-marker',
+                html: `
+                    <div style="position: relative;">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"
+                                  fill="#0284c7" stroke="#fff" stroke-width="2"/>
+                            <circle cx="12" cy="9" r="2.5" fill="#fff"/>
+                        </svg>
+                    </div>
+                `,
+                iconSize: [40, 40],
+                iconAnchor: [20, 40],
+                popupAnchor: [0, -40]
+            });
+
+            // Tambahkan marker
+            const marker = L.marker([eventLat, eventLng], { icon: customIcon }).addTo(map);
+
+            // URL Google Maps
+            const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${eventLat},${eventLng}`;
+
+            // Popup content dengan link ke Google Maps
+            const popupContent = `
+                <div class="text-center p-2" style="min-width: 200px;">
+                    <h4 class="font-bold text-slate-900 mb-2">${eventTitle}</h4>
+                    <p class="text-xs text-slate-600 mb-3">${eventLat.toFixed(6)}, ${eventLng.toFixed(6)}</p>
+                    <a href="${googleMapsUrl}"
+                       target="_blank"
+                       class="inline-flex items-center gap-2 bg-sky-600 hover:bg-sky-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                        <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                        </svg>
+                        Buka di Google Maps
+                    </a>
+                </div>
+            `;
+
+            marker.bindPopup(popupContent, {
+                maxWidth: 300,
+                className: 'custom-popup'
+            });
+
+            // Otomatis buka popup
+            marker.openPopup();
+
+            // Klik marker untuk buka Google Maps
+            marker.on('click', function() {
+                window.open(googleMapsUrl, '_blank');
+            });
+        });
+    </script>
+
+    {{-- Custom CSS untuk styling popup --}}
+    <style>
+        .custom-marker {
+            background: transparent;
+            border: none;
+        }
+
+        .leaflet-popup-content-wrapper {
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .leaflet-popup-content {
+            margin: 12px;
+        }
+
+        .leaflet-popup-tip {
+            background: white;
+        }
+
+        .custom-popup .leaflet-popup-close-button {
+            color: #64748b;
+            font-size: 20px;
+            padding: 8px;
+        }
+
+        .custom-popup .leaflet-popup-close-button:hover {
+            color: #0f172a;
+        }
+    </style>
 </x-app-layout>

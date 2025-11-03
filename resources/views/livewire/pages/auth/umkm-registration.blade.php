@@ -40,16 +40,22 @@
 
         <!-- Location Map & Description -->
         <div class="grid grid-cols-2 gap-4">
-            <!-- Google Map -->
+            <!-- Leaflet Map -->
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Lokasi Usaha</label>
-                <div id="map"
+                <div id="umkm-map"
                     class="w-full h-52 border-2 border-gray-300 rounded-lg bg-gray-50 relative overflow-hidden shadow-sm">
                     <!-- Map will be loaded here -->
                     <div id="map-placeholder"
-                        class="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
+                        class="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 z-10">
                         <div class="text-center">
-                            <i class="fas fa-map-marker-alt text-5xl text-primary mb-3"></i>
+                            <svg class="w-12 h-12 text-primary mx-auto mb-3" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
                             <p class="text-sm text-gray-600 font-medium">Klik peta untuk pilih lokasi</p>
                             <p class="text-xs text-gray-500 mt-1">Atau seret marker</p>
                         </div>
@@ -58,11 +64,18 @@
                 <input type="hidden" wire:model="latitude">
                 <input type="hidden" wire:model="longitude">
                 @if ($latitude && $longitude)
-                    <p class="text-xs text-green-600 mt-2">
-                        <i class="fas fa-check-circle"></i> Lokasi tersimpan: {{ number_format($latitude, 6) }},
-                        {{ number_format($longitude, 6) }}
+                    <p class="text-xs text-green-600 mt-2 flex items-center gap-1">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd"
+                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                clip-rule="evenodd" />
+                        </svg>
+                        Lokasi tersimpan: {{ number_format($latitude, 6) }}, {{ number_format($longitude, 6) }}
                     </p>
                 @endif
+                @error('latitude')
+                    <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span>
+                @enderror
             </div>
 
             <!-- Description -->
@@ -70,6 +83,9 @@
                 <label class="block text-sm font-medium text-gray-700 mb-2">Deskripsi Usaha</label>
                 <textarea wire:model.defer="business_description" rows="7" placeholder="Ceritakan tentang usaha Anda..."
                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none resize-none transition"></textarea>
+                @error('business_description')
+                    <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span>
+                @enderror
             </div>
         </div>
 
@@ -93,143 +109,146 @@
     </form>
 </div>
 
-<!-- Google Maps Script -->
-<script>
-    let map;
-    let marker;
-    let mapInitialized = false;
+{{-- Leaflet CSS & JS - Pastikan sudah di-include di layout --}}
+@push('styles')
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+@endpush
 
-    function initMap() {
-        if (mapInitialized) return;
-        mapInitialized = true;
+@push('scripts')
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
-        // Remove placeholder
-        const placeholder = document.getElementById('map-placeholder');
-        if (placeholder) {
-            placeholder.remove();
+    <script>
+        let umkmMap;
+        let umkmMarker;
+        let mapInitialized = false;
+
+        function initUmkmMap() {
+            if (mapInitialized) return;
+            mapInitialized = true;
+
+            // Remove placeholder
+            const placeholder = document.getElementById('map-placeholder');
+            if (placeholder) {
+                placeholder.style.display = 'none';
+            }
+
+            // Default location (Jambi, Indonesia)
+            const defaultLat = {{ $latitude ?? '-1.6101' }};
+            const defaultLng = {{ $longitude ?? '103.6131' }};
+
+            // Initialize map
+            umkmMap = L.map('umkm-map').setView([defaultLat, defaultLng], 13);
+
+            // Add tile layer
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+                maxZoom: 19
+            }).addTo(umkmMap);
+
+            // Custom icon
+            const customIcon = L.divIcon({
+                className: 'custom-marker',
+                html: `
+                <div style="position: relative;">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
+                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"
+                              fill="#0ea5e9" stroke="#fff" stroke-width="2"/>
+                        <circle cx="12" cy="9" r="2.5" fill="#fff"/>
+                    </svg>
+                </div>
+            `,
+                iconSize: [40, 40],
+                iconAnchor: [20, 40],
+                popupAnchor: [0, -40]
+            });
+
+            // Add click listener to map
+            umkmMap.on('click', function(e) {
+                placeUmkmMarker(e.latlng);
+            });
+
+            // Try to get user's current location
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const userLocation = L.latLng(position.coords.latitude, position.coords.longitude);
+                        umkmMap.setView(userLocation, 15);
+                        placeUmkmMarker(userLocation);
+                    },
+                    () => {
+                        // If geolocation fails, place marker at default location
+                        placeUmkmMarker(L.latLng(defaultLat, defaultLng));
+                    }
+                );
+            } else {
+                placeUmkmMarker(L.latLng(defaultLat, defaultLng));
+            }
         }
 
-        // Default location (Palembang, Indonesia)
-        const defaultLocation = {
-            lat: -2.9761,
-            lng: 104.7754
-        };
+        function placeUmkmMarker(latlng) {
+            const customIcon = L.divIcon({
+                className: 'custom-marker',
+                html: `
+                <div style="position: relative;">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
+                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"
+                              fill="#0ea5e9" stroke="#fff" stroke-width="2"/>
+                        <circle cx="12" cy="9" r="2.5" fill="#fff"/>
+                    </svg>
+                </div>
+            `,
+                iconSize: [40, 40],
+                iconAnchor: [20, 40]
+            });
 
-        // Map options
-        const mapOptions = {
-            center: defaultLocation,
-            zoom: 13,
-            mapTypeControl: false,
-            streetViewControl: false,
-            fullscreenControl: true,
-            zoomControl: true,
-            styles: [{
-                featureType: "poi",
-                elementType: "labels",
-                stylers: [{
-                    visibility: "off"
-                }]
-            }]
-        };
+            if (umkmMarker) {
+                umkmMarker.setLatLng(latlng);
+            } else {
+                umkmMarker = L.marker(latlng, {
+                    icon: customIcon,
+                    draggable: true,
+                    title: "Lokasi Usaha Anda"
+                }).addTo(umkmMap);
 
-        map = new google.maps.Map(document.getElementById('map'), mapOptions);
+                umkmMarker.on('dragend', function() {
+                    updateUmkmLocation(umkmMarker.getLatLng());
+                });
+            }
 
-        // Add click listener to map
-        map.addListener('click', (event) => {
-            placeMarker(event.latLng);
+            updateUmkmLocation(latlng);
+        }
+
+        function updateUmkmLocation(latlng) {
+            const lat = latlng.lat;
+            const lng = latlng.lng;
+
+            @this.set('latitude', lat);
+            @this.set('longitude', lng);
+        }
+
+        // Initialize when document is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            // Delay to ensure Livewire is ready
+            setTimeout(initUmkmMap, 100);
         });
 
-        // Try to get user's current location
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const userLocation = {
-                        lat: position.coords.latitude,
-                        lng: position.coords.longitude
-                    };
-                    map.setCenter(userLocation);
-                    placeMarker(new google.maps.LatLng(userLocation.lat, userLocation.lng));
-                },
-                () => {
-                    // If geolocation fails, use default location
-                    console.log('Geolocation failed, using default location');
-                }
-            );
-        }
-    }
+        // Re-initialize if Livewire updates the component
+        document.addEventListener('livewire:load', function() {
+            setTimeout(initUmkmMap, 100);
+        });
+    </script>
 
-    function placeMarker(location) {
-        if (marker) {
-            marker.setPosition(location);
-        } else {
-            marker = new google.maps.Marker({
-                position: location,
-                map: map,
-                draggable: true,
-                animation: google.maps.Animation.DROP,
-                title: "Lokasi Usaha Anda"
-            });
-
-            marker.addListener('dragend', () => {
-                updateLocation(marker.getPosition());
-            });
+    <style>
+        #umkm-map {
+            min-height: 208px;
+            z-index: 1;
         }
 
-        updateLocation(location);
-    }
-
-    function updateLocation(location) {
-        const lat = location.lat();
-        const lng = location.lng();
-
-        @this.set('latitude', lat);
-        @this.set('longitude', lng);
-
-        console.log('Location updated:', lat, lng);
-    }
-
-    // Load Google Maps API
-    function loadGoogleMaps() {
-        if (typeof google !== 'undefined' && google.maps) {
-            initMap();
-            return;
+        .custom-marker {
+            background: transparent;
+            border: none;
         }
-
-        const script = document.createElement('script');
-        script.src = `https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&callback=initMap`;
-        script.async = true;
-        script.defer = true;
-        script.onerror = () => {
-            console.error('Failed to load Google Maps');
-            document.getElementById('map-placeholder').innerHTML = `
-                <div class="text-center">
-                    <i class="fas fa-exclamation-triangle text-5xl text-red-500 mb-3"></i>
-                    <p class="text-sm text-red-600 font-medium">Gagal memuat Google Maps</p>
-                    <p class="text-xs text-gray-500 mt-1">Periksa API key Anda</p>
-                </div>
-            `;
-        };
-        document.head.appendChild(script);
-    }
-
-    // Initialize when document is ready
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', loadGoogleMaps);
-    } else {
-        loadGoogleMaps();
-    }
-</script>
-
-<style>
-    #map {
-        min-height: 208px;
-    }
-
-    .gm-style .gm-style-iw-c {
-        border-radius: 8px;
-    }
-
-    .gm-style .gm-style-iw-t::after {
-        background: linear-gradient(45deg, rgba(255, 255, 255, 1) 50%, rgba(255, 255, 255, 0) 51%, rgba(255, 255, 255, 0) 100%);
-    }
-</style>
+    </style>
+@endpush
