@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Order;
 use App\Models\Product;
+use App\Models\ProductOrder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Midtrans\Config;
 use Midtrans\Snap;
@@ -14,152 +15,186 @@ class OrderController extends Controller
 {
     public function __construct()
     {
-        // Set Midtrans configuration
-        Config::$serverKey = config('services.midtrans.server_key');
-        Config::$isProduction = config('services.midtrans.is_production');
-        Config::$isSanitized = config('services.midtrans.is_sanitized');
-        Config::$is3ds = config('services.midtrans.is_3ds');
+        // Midtrans config
+        Config::$serverKey    = config('services.midtrans.server_key');
+        Config::$isProduction = (bool) config('services.midtrans.is_production', false);
+        Config::$isSanitized  = (bool) config('services.midtrans.is_sanitized', true);
+        Config::$is3ds        = (bool) config('services.midtrans.is_3ds', true);
     }
 
     public function createOrder(Request $request, Product $product)
     {
-        $request->validate([
-            'quantity' => 'required|integer|min:1',
+        $data = $request->validate([
+            'quantity'        => ['required', 'integer', 'min:1'],
+            'customer_name'   => ['required', 'string', 'max:150'],
+            'customer_email'  => ['required', 'email', 'max:191'],
+            'customer_phone'  => ['required', 'string', 'max:30'],
+            'notes'           => ['nullable', 'string', 'max:255'],
         ]);
 
-        // Check stock
-        if ($product->stock < $request->quantity) {
+        // Stock check
+        if ($product->stock < $data['quantity']) {
             return response()->json([
                 'success' => false,
-                'message' => 'Stok tidak mencukupi'
-            ], 400);
+                'message' => 'Stok tidak mencukupi',
+            ], 422);
         }
 
-        // Generate unique order ID
-        $orderId = 'ORDER-' . strtoupper(Str::random(10));
+        // Hitung harga
+        $pricePerUnit = (int) $product->price;              // pastikan integer untuk Midtrans
+        $totalAmount  = $pricePerUnit * (int) $data['quantity'];
 
-        // Calculate total
-        $totalAmount = $product->price * $request->quantity;
+        // Generate ID
+        $orderNumber      = 'PROD-' . strtoupper(Str::random(8));                                 // untuk user/URL
+        $midtransOrderId  = 'MID-' . now()->format('YmdHis') . '-' . strtoupper(Str::random(6));  // untuk Midtrans
 
-        // Create order
-        $order = Order::create([
-            'order_id' => $orderId,
-            'user_id' => Auth::id(),
-            'product_id' => $product->id,
-            'quantity' => $request->quantity,
-            'price' => $product->price,
-            'total_amount' => $totalAmount,
-            'status' => 'pending',
+        // Simpan order terlebih dahulu
+        $order = ProductOrder::create([
+            'order_number'       => $orderNumber,
+            'midtrans_order_id'  => $midtransOrderId,
+            'user_id'            => Auth::id(), // boleh null kalau guest checkout
+            'product_id'         => $product->id,
+            'quantity'           => (int) $data['quantity'],
+            'price_per_unit'     => $pricePerUnit,
+            'total_amount'       => $totalAmount,
+            'customer_name'      => $data['customer_name'],
+            'customer_email'     => $data['customer_email'],
+            'customer_phone'     => $data['customer_phone'],
+            'notes'              => $data['notes'] ?? null,
+            'payment_status'     => 'pending',
         ]);
 
-        // Prepare transaction details for Midtrans
-        $transactionDetails = [
-            'order_id' => $order->order_id,
-            'gross_amount' => (int) $totalAmount,
-        ];
-
-        $itemDetails = [
-            [
-                'id' => $product->id,
-                'price' => (int) $product->price,
-                'quantity' => $request->quantity,
-                'name' => $product->name,
-            ]
-        ];
-
-        $customerDetails = [
-            'first_name' => Auth::user()->name,
-            'email' => Auth::user()->email,
-            'phone' => Auth::user()->phone ?? '08123456789',
-        ];
-
+        // Siapkan payload Midtrans
         $transaction = [
-            'transaction_details' => $transactionDetails,
-            'item_details' => $itemDetails,
-            'customer_details' => $customerDetails,
+            'transaction_details' => [
+                'order_id'     => $order->midtrans_order_id, // GUNAKAN midtrans_order_id
+                'gross_amount' => (int) $totalAmount,
+            ],
+            'item_details' => [[
+                'id'       => (string) $product->id,
+                'price'    => (int) $pricePerUnit,
+                'quantity' => (int) $order->quantity,
+                // batasi panjang nama agar aman
+                'name'     => mb_strimwidth($product->name, 0, 50, '…'),
+            ]],
+            'customer_details' => [
+                'first_name' => $order->customer_name,
+                'email'      => $order->customer_email,
+                'phone'      => $order->customer_phone,
+            ],
         ];
 
         try {
-            // Get Snap Token from Midtrans
             $snapToken = Snap::getSnapToken($transaction);
-
-            // Save snap token to order
             $order->update(['snap_token' => $snapToken]);
 
             return response()->json([
-                'success' => true,
+                'success'    => true,
                 'snap_token' => $snapToken,
-                'order_id' => $order->order_id,
+                // Frontend kamu pakai ini untuk redirect status page
+                'order_id'   => $order->order_number,
             ]);
-        } catch (\Exception $e) {
-            // Delete order if failed to get snap token
+        } catch (\Throwable $e) {
+            // Jika gagal ambil snap token, hapus order agar tidak nyangkut
             $order->delete();
 
             return response()->json([
                 'success' => false,
-                'message' => 'Gagal membuat transaksi: ' . $e->getMessage()
+                'message' => 'Gagal membuat transaksi: ' . $e->getMessage(),
             ], 500);
         }
     }
 
+    /**
+     * Endpoint NOTIFICATION/CALLBACK dari Midtrans
+     * Pastikan route ini dipakai sebagai "Notification URL" di dashboard Midtrans.
+     */
     public function callback(Request $request)
     {
+        // Verifikasi signature
         $serverKey = config('services.midtrans.server_key');
-        $hashed = hash("sha512", $request->order_id . $request->status_code . $request->gross_amount . $serverKey);
-
-        if ($hashed == $request->signature_key) {
-            $order = Order::where('order_id', $request->order_id)->first();
-
-            if ($order) {
-                // Update order status based on transaction status
-                if ($request->transaction_status == 'capture' || $request->transaction_status == 'settlement') {
-                    $order->update([
-                        'status' => 'paid',
-                        'payment_type' => $request->payment_type,
-                        'paid_at' => now(),
-                        'midtrans_response' => json_encode($request->all()),
-                    ]);
-
-                    // Update product stock
-                    $product = $order->product;
-                    $product->decrement('stock', $order->quantity);
-                } elseif ($request->transaction_status == 'pending') {
-                    $order->update([
-                        'status' => 'pending',
-                        'midtrans_response' => json_encode($request->all()),
-                    ]);
-                } elseif ($request->transaction_status == 'deny' || $request->transaction_status == 'expire' || $request->transaction_status == 'cancel') {
-                    $order->update([
-                        'status' => 'failed',
-                        'midtrans_response' => json_encode($request->all()),
-                    ]);
-                }
-            }
+        $calcSig   = hash('sha512', $request->order_id . $request->status_code . $request->gross_amount . $serverKey);
+        if (!hash_equals($calcSig, (string) $request->signature_key)) {
+            return response()->json(['message' => 'Invalid signature'], 403);
         }
 
-        return response()->json(['status' => 'success']);
+        // Ambil order berdasarkan midtrans_order_id (bukan order_number)
+        $order = ProductOrder::where('midtrans_order_id', $request->order_id)->first();
+        if (!$order) {
+            return response()->json(['message' => 'Order not found'], 404);
+        }
+
+        // Idempotensi: kalau sudah paid/failed, jangan proses ulang
+        if (in_array($order->payment_status, ['paid', 'failed'])) {
+            // tetap update payload terakhir untuk audit
+            $order->update(['midtrans_response' => json_encode($request->all())]);
+            return response()->json(['message' => 'Already processed']);
+        }
+
+        $txStatus   = $request->transaction_status;  // settlement|capture|pending|deny|expire|cancel|refund|chargeback
+        $paymentType = $request->payment_type;
+
+        // Proses atomik: update order & stok sekali jalan
+        DB::transaction(function () use ($order, $txStatus, $paymentType, $request) {
+            if (in_array($txStatus, ['capture', 'settlement'])) {
+                // Untuk kartu kredit, jika ada fraud_status=challenge, idealnya tahan dulu.
+                // Versi sederhana: anggap paid ketika capture/settlement.
+                $order->update([
+                    'payment_status'   => 'paid',
+                    'payment_type'     => $paymentType,
+                    'paid_at'          => now(),
+                    'midtrans_response' => json_encode($request->all()),
+                ]);
+
+                // Kurangi stok hanya sekali, saat paid
+                $order->product()->decrement('stock', $order->quantity);
+            } elseif ($txStatus === 'pending') {
+                $order->update([
+                    'payment_status'   => 'pending',
+                    'payment_type'     => $paymentType,
+                    'midtrans_response' => json_encode($request->all()),
+                ]);
+            } elseif (in_array($txStatus, ['deny', 'expire', 'cancel'])) {
+                $order->update([
+                    'payment_status'   => 'failed',
+                    'payment_type'     => $paymentType,
+                    'midtrans_response' => json_encode($request->all()),
+                ]);
+            } else {
+                // status lain (refund/chargeback), simplifikasi -> failed
+                $order->update([
+                    'payment_status'   => 'failed',
+                    'payment_type'     => $paymentType,
+                    'midtrans_response' => json_encode($request->all()),
+                ]);
+            }
+        });
+
+        return response()->json(['message' => 'OK']);
     }
 
+    // Halaman hasil (opsional)
     public function success(Request $request)
     {
-        $orderId = $request->order_id;
-        $order = Order::where('order_id', $orderId)->with('product')->first();
+        // Frontend mengirim order_number (bukan midtrans_order_id)
+        $order = ProductOrder::where('order_number', $request->order_id)
+            ->with('product')->firstOrFail();
 
         return view('orders.success', compact('order'));
     }
 
     public function pending(Request $request)
     {
-        $orderId = $request->order_id;
-        $order = Order::where('order_id', $orderId)->with('product')->first();
+        $order = ProductOrder::where('order_number', $request->order_id)
+            ->with('product')->firstOrFail();
 
         return view('orders.pending', compact('order'));
     }
 
     public function failed(Request $request)
     {
-        $orderId = $request->order_id;
-        $order = Order::where('order_id', $orderId)->with('product')->first();
+        $order = ProductOrder::where('order_number', $request->order_id)
+            ->with('product')->firstOrFail();
 
         return view('orders.failed', compact('order'));
     }
