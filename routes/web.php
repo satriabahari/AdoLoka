@@ -9,95 +9,119 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Middleware\VerifyCsrfToken;
 use App\Livewire\Pages\Profile\Profile;
+use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
 use Illuminate\Support\Facades\Route;
-use Laravel\Socialite\Facades\Socialite;
 use App\Livewire\Pages\Auth\MultiStepRegistration;
 
-Route::get('/', [HomeController::class, 'index'])
-    ->name('home');
+/*
+|--------------------------------------------------------------------------
+| Public
+|--------------------------------------------------------------------------
+*/
 
-Route::get('events', [EventController::class, 'index'])
-    ->middleware(['auth', 'verified'])
-    ->name('events');
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
-Route::get('events/{event:slug}', [EventController::class, 'show'])
-    ->middleware(['auth', 'verified'])
-    ->name('events.show');
-
-// Product Routes
-Route::get('/products', [ProductController::class, 'index'])->name('products.index');
-Route::get('/products/{product:slug}', [ProductController::class, 'show'])->name('products.show');
-
-// Product Payment Routes
-Route::post('/products/{product:slug}/payment', [ProductController::class, 'createPayment'])
-    ->name('products.payment.create');
-Route::get('/products/payment/status/{orderNumber}', [ProductController::class, 'paymentStatus'])
-    ->name('products.payment.status');
-Route::post('/products/payment/callback', [ProductController::class, 'paymentCallback'])
-    ->name('products.payment.callback');
-
-Route::get('/services', [ServiceController::class, 'index'])->name('services.index');
-Route::get('/services/{service}', [ServiceController::class, 'show'])->name('services.show');
-
-Route::middleware(['auth'])->group(function () {
-    Route::post('/order/create/{product}', [OrderController::class, 'createOrder'])->name('order.create');
-
-    Route::get('/order/success', [OrderController::class, 'success'])->name('order.success');
-    Route::get('/order/pending', [OrderController::class, 'pending'])->name('order.pending');
-    Route::get('/order/failed', [OrderController::class, 'failed'])->name('order.failed');
+/*
+|--------------------------------------------------------------------------
+| Events (protected)
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth', 'verified'])->prefix('events')->name('events.')->group(function () {
+    Route::get('/', [EventController::class, 'index'])->name('index');
+    Route::get('/{event:slug}', [EventController::class, 'show'])->name('show');
 });
 
-Route::post('/midtrans/callback', [OrderController::class, 'callback'])->name('midtrans.callback');
+/*
+|--------------------------------------------------------------------------
+| Products (protected)
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth', 'verified'])->prefix('products')->name('products.')->group(function () {
+    Route::get('/', [ProductController::class, 'index'])->name('index');
+    Route::get('/{product:slug}', [ProductController::class, 'show'])->name('show');
+});
 
-// Payment Routes
-// Route::post('/payment/create/{service}', [PaymentController::class, 'createOrder'])->name('payment.create');
-// Route::post('/payment/notification', [PaymentController::class, 'notification'])->name('payment.notification');
-// Route::get('/payment/finish', [PaymentController::class, 'finish'])->name('payment.finish');
-// Route::get('/payment/status/{orderNumber}', [PaymentController::class, 'status'])->name('payment.status');
+/*
+|--------------------------------------------------------------------------
+| Services (protected)
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth', 'verified'])->prefix('services')->name('services.')->group(function () {
+    Route::get('/', [ServiceController::class, 'index'])->name('index');
+    Route::get('/{service}', [ServiceController::class, 'show'])->name('show');
+});
 
-// Payment Routes - Unified untuk Product & Service
+/*
+|--------------------------------------------------------------------------
+| Orders (protected)
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth'])->prefix('order')->name('order.')->group(function () {
+    Route::post('/create/{product}', [OrderController::class, 'createOrder'])->name('create');
+
+    Route::get('/success', [OrderController::class, 'success'])->name('success');
+    Route::get('/pending',  [OrderController::class, 'pending'])->name('pending');
+    Route::get('/failed',   [OrderController::class, 'failed'])->name('failed');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Payment (unified)
+|--------------------------------------------------------------------------
+*/
 Route::prefix('payment')->name('payment.')->group(function () {
-    // Create order (product atau service)
     Route::post('/{type}/{id}/create', [PaymentController::class, 'createOrder'])
-        ->name('create')
-        ->where('type', 'product|service');
+        ->whereIn('type', ['product', 'service'])
+        ->whereNumber('id')
+        ->middleware(['auth'])
+        ->name('create');
 
-    // Midtrans notification callback
-    // Route::post('/notification', [PaymentController::class, 'notification'])
-    //     ->name('notification');
-
-    Route::post('/notification', [PaymentController::class, 'notification'])
-        ->withoutMiddleware([VerifyCsrfToken::class])    // <— CSRF OFF
-        ->name('notification');
-
-    // Status page
     Route::get('/status/{orderNumber}', [PaymentController::class, 'status'])
+        ->middleware(['auth'])
         ->name('status');
+
+    // Debug route opsional
+    Route::get('/test-notification', [PaymentController::class, 'testNotification']);
+    Route::get('/check-status/{orderNumber}', [PaymentController::class, 'checkStatus']);
+    Route::post('/sync-status/{orderNumber}', [PaymentController::class, 'syncStatus']);
 });
 
-Route::get('/profile', Profile::class)
-    ->middleware(['auth'])
-    ->name('profile');;
+// Callback Midtrans (no CSRF)
+Route::post('payment/notification', [PaymentController::class, 'notification'])
+    ->withoutMiddleware([
+        VerifyCsrfToken::class,
+        ValidateCsrfToken::class
+    ])
+    ->name('payment.notification');
 
-Route::view('dashboard', 'dashboard')
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard');
+/*
+|--------------------------------------------------------------------------
+| Profile & Dashboard (protected)
+|--------------------------------------------------------------------------
+*/
+Route::get('/profile', Profile::class)->middleware(['auth'])->name('profile');
 
-Route::get('/auth/redirect', function () {
-    return Socialite::driver('google')->redirect();
+/*
+|--------------------------------------------------------------------------
+| Google OAuth
+|--------------------------------------------------------------------------
+*/
+Route::prefix('auth/google')->name('auth.google.')->group(function () {
+    Route::get('/', [GoogleAuthController::class, 'redirect'])->name('redirect');
+    Route::get('/callback', [GoogleAuthController::class, 'callback'])->name('callback');
 });
 
-Route::get('/auth/callback', function () {
-    $user = Socialite::driver('google')->user();
-
-    // $user->token
-});
-
-// Google OAuth
-Route::get('/auth/google', [GoogleAuthController::class, 'redirect'])->name('auth.google');
-Route::get('/auth/google/callback', [GoogleAuthController::class, 'callback']);
-
+/*
+|--------------------------------------------------------------------------
+| Registration (public)
+|--------------------------------------------------------------------------
+*/
 Route::get('/register', MultiStepRegistration::class)->name('register');
 Route::get('/register/umkm', MultiStepRegistration::class)->name('register.umkm');
+
+Route::get('/map', function () {
+    return view('map');
+})->name('map');
+
 
 require __DIR__ . '/auth.php';
