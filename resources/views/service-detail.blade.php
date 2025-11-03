@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div class="max-w-5xl mx-auto pt-12">
+    <div class="max-w-5xl mx-auto pt-12 px-4">
         <!-- Back Button -->
         <button onclick="window.history.back()"
             class="flex items-center gap-2 text-sky-600 hover:text-sky-700 transition-colors mb-8">
@@ -13,8 +13,7 @@
         <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
             <!-- Header Image -->
             <div class="bg-gradient-to-br from-sky-400 to-sky-600 h-64 flex items-center justify-center relative">
-                <img src="{{ $service->image_url }}" alt="{{ $service->name }}" class="w-full h-full object-cover ">
-                <!-- Category Badge -->
+                <img src="{{ $service->image_url }}" alt="{{ $service->name }}" class="w-full h-full object-cover">
                 <div class="absolute top-6 left-6">
                     <span class="px-4 py-2 bg-white/20 backdrop-blur-sm text-white rounded-full text-sm font-medium">
                         {{ $service->category->name }}
@@ -140,59 +139,32 @@
                 <div class="bg-slate-50 rounded-xl p-6 mb-8">
                     <h3 class="text-lg font-bold text-slate-800 mb-4">Informasi Pemesan</h3>
                     <div class="space-y-4">
-                        <!-- Nama -->
                         <div>
                             <label class="block text-sm font-medium text-slate-700 mb-2">Nama Lengkap *</label>
                             <input type="text" id="customer-name"
                                 class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-transparent"
                                 placeholder="Masukkan nama lengkap">
-                            <p id="error-name" class="hidden text-sm text-red-600 mt-1.5 flex items-center gap-1">
-                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd"
-                                        d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-                                        clip-rule="evenodd" />
-                                </svg>
-                                <span></span>
-                            </p>
+                            <p id="error-name" class="hidden text-sm text-red-600 mt-1.5"></p>
                         </div>
 
                         <div class="grid md:grid-cols-2 gap-4">
-                            <!-- Email -->
                             <div>
                                 <label class="block text-sm font-medium text-slate-700 mb-2">Email *</label>
                                 <input type="email" id="customer-email"
                                     class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-transparent"
                                     placeholder="email@example.com">
-                                <p id="error-email"
-                                    class="hidden text-sm text-red-600 mt-1.5 flex items-center gap-1">
-                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd"
-                                            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-                                            clip-rule="evenodd" />
-                                    </svg>
-                                    <span></span>
-                                </p>
+                                <p id="error-email" class="hidden text-sm text-red-600 mt-1.5"></p>
                             </div>
 
-                            <!-- Phone -->
                             <div>
                                 <label class="block text-sm font-medium text-slate-700 mb-2">No. WhatsApp *</label>
                                 <input type="tel" id="customer-phone"
                                     class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-transparent"
                                     placeholder="08xxxxxxxxxx">
-                                <p id="error-phone"
-                                    class="hidden text-sm text-red-600 mt-1.5 flex items-center gap-1">
-                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd"
-                                            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-                                            clip-rule="evenodd" />
-                                    </svg>
-                                    <span></span>
-                                </p>
+                                <p id="error-phone" class="hidden text-sm text-red-600 mt-1.5"></p>
                             </div>
                         </div>
 
-                        <!-- Notes -->
                         <div>
                             <label class="block text-sm font-medium text-slate-700 mb-2">Catatan (Opsional)</label>
                             <textarea id="customer-notes" rows="3"
@@ -202,12 +174,10 @@
                     </div>
                 </div>
 
-
-
                 <!-- CTA Buttons -->
                 <div class="flex flex-col sm:flex-row gap-4">
                     <button id="buy-now-btn"
-                        class="flex-1 px-8 py-4 bg-sky-600 hover:bg-sky-700 text-white rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center gap-2 disabled:bg-slate-400 disabled:cursor-not-allowed">
+                        class="flex-1 px-8 py-4 bg-sky-600 hover:bg-sky-700 text-white rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center gap-2">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
@@ -230,7 +200,6 @@
         </div>
     </div>
 
-    {{-- Midtrans Snap Script --}}
     <script src="https://app.sandbox.midtrans.com/snap/snap.js"
         data-client-key="{{ config('services.midtrans.client_key') }}"></script>
 
@@ -242,7 +211,6 @@
         const buyNowBtn = document.getElementById('buy-now-btn');
         const totalPriceEl = document.getElementById('total-price');
 
-        // Error elements
         const nameInput = document.getElementById('customer-name');
         const emailInput = document.getElementById('customer-email');
         const phoneInput = document.getElementById('customer-phone');
@@ -250,57 +218,12 @@
         const errorEmail = document.getElementById('error-email');
         const errorPhone = document.getElementById('error-phone');
 
-        // Update total price
         function updateTotalPrice() {
             const quantity = parseInt(qtyInput.value);
             const total = servicePrice * quantity;
             totalPriceEl.textContent = 'Rp ' + total.toLocaleString('id-ID');
         }
 
-        // Show error message
-        function showError(element, errorElement, message) {
-            element.classList.add('border-red-500', 'focus:ring-red-500');
-            element.classList.remove('border-slate-300', 'focus:ring-sky-500');
-            errorElement.classList.remove('hidden');
-            errorElement.querySelector('span').textContent = message;
-        }
-
-        // Clear error message
-        function clearError(element, errorElement) {
-            element.classList.remove('border-red-500', 'focus:ring-red-500');
-            element.classList.add('border-slate-300', 'focus:ring-sky-500');
-            errorElement.classList.add('hidden');
-        }
-
-        // Clear all errors
-        function clearAllErrors() {
-            clearError(nameInput, errorName);
-            clearError(emailInput, errorEmail);
-            clearError(phoneInput, errorPhone);
-        }
-
-        // Validate on blur
-        nameInput.addEventListener('blur', () => {
-            if (nameInput.value.trim()) {
-                clearError(nameInput, errorName);
-            }
-        });
-
-        emailInput.addEventListener('blur', () => {
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (emailInput.value.trim() && emailRegex.test(emailInput.value.trim())) {
-                clearError(emailInput, errorEmail);
-            }
-        });
-
-        phoneInput.addEventListener('blur', () => {
-            const phoneRegex = /^(08|62|8)[0-9]{8,11}$/;
-            if (phoneInput.value.trim() && phoneRegex.test(phoneInput.value.replace(/[\s-]/g, ''))) {
-                clearError(phoneInput, errorPhone);
-            }
-        });
-
-        // Quantity controls
         decreaseBtn.addEventListener('click', () => {
             let value = parseInt(qtyInput.value);
             if (value > 1) {
@@ -318,9 +241,11 @@
             }
         });
 
-        // Buy Now - Midtrans Integration
         buyNowBtn.addEventListener('click', async () => {
-            clearAllErrors();
+            // Clear errors
+            errorName.classList.add('hidden');
+            errorEmail.classList.add('hidden');
+            errorPhone.classList.add('hidden');
 
             const quantity = parseInt(qtyInput.value);
             const customerName = nameInput.value.trim();
@@ -330,52 +255,33 @@
 
             let hasError = false;
 
-            // Validation
             if (!customerName) {
-                showError(nameInput, errorName, 'Nama lengkap harus diisi');
+                errorName.textContent = 'Nama lengkap harus diisi';
+                errorName.classList.remove('hidden');
                 hasError = true;
-                if (!hasError) nameInput.focus();
             }
 
             if (!customerEmail) {
-                showError(emailInput, errorEmail, 'Email harus diisi');
+                errorEmail.textContent = 'Email harus diisi';
+                errorEmail.classList.remove('hidden');
                 hasError = true;
-                if (!customerName) emailInput.focus();
-            } else {
-                // Email validation
-                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                if (!emailRegex.test(customerEmail)) {
-                    showError(emailInput, errorEmail, 'Format email tidak valid');
-                    hasError = true;
-                    if (!customerName) emailInput.focus();
-                }
+            } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customerEmail)) {
+                errorEmail.textContent = 'Format email tidak valid';
+                errorEmail.classList.remove('hidden');
+                hasError = true;
             }
 
             if (!customerPhone) {
-                showError(phoneInput, errorPhone, 'Nomor WhatsApp harus diisi');
+                errorPhone.textContent = 'Nomor WhatsApp harus diisi';
+                errorPhone.classList.remove('hidden');
                 hasError = true;
-                if (!customerName && !customerEmail) phoneInput.focus();
-            } else {
-                // Phone validation (Indonesia format)
-                const phoneRegex = /^(08|62|8)[0-9]{8,11}$/;
-                if (!phoneRegex.test(customerPhone.replace(/[\s-]/g, ''))) {
-                    showError(phoneInput, errorPhone, 'Format nomor tidak valid (contoh: 08123456789)');
-                    hasError = true;
-                    if (!customerName && !customerEmail) phoneInput.focus();
-                }
+            } else if (!/^(08|62|8)[0-9]{8,11}$/.test(customerPhone.replace(/[\s-]/g, ''))) {
+                errorPhone.textContent = 'Format nomor tidak valid (contoh: 08123456789)';
+                errorPhone.classList.remove('hidden');
+                hasError = true;
             }
 
-            if (hasError) {
-                // Scroll to first error
-                const firstError = document.querySelector('.border-red-500');
-                if (firstError) {
-                    firstError.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'center'
-                    });
-                }
-                return;
-            }
+            if (hasError) return;
 
             buyNowBtn.disabled = true;
             buyNowBtn.innerHTML = `
@@ -387,14 +293,14 @@
             `;
 
             try {
-                const response = await fetch('{{ route('payment.create', $service) }}', {
+                const response = await fetch('/payment/service/{{ $service->id }}/create', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
                     },
                     body: JSON.stringify({
-                        quantity: quantity,
+                        quantity,
                         customer_name: customerName,
                         customer_email: customerEmail,
                         customer_phone: customerPhone,
@@ -406,35 +312,16 @@
 
                 if (data.success) {
                     window.snap.pay(data.snap_token, {
-                        onSuccess: function(result) {
-                            window.location.href = '{{ url('/payment/status') }}/' + data.order_id;
-                        },
-                        onPending: function(result) {
-                            window.location.href = '{{ url('/payment/status') }}/' + data.order_id;
-                        },
-                        onError: function(result) {
+                        onSuccess: () => window.location.href = '/payment/status/' + data.order_number,
+                        onPending: () => window.location.href = '/payment/status/' + data.order_number,
+                        onError: () => {
                             alert('Pembayaran gagal, silakan coba lagi');
                             resetButton();
                         },
-                        onClose: function() {
-                            resetButton();
-                        }
+                        onClose: () => resetButton()
                     });
                 } else {
-                    if (data.errors) {
-                        // Show server validation errors
-                        if (data.errors.customer_name) {
-                            showError(nameInput, errorName, data.errors.customer_name[0]);
-                        }
-                        if (data.errors.customer_email) {
-                            showError(emailInput, errorEmail, data.errors.customer_email[0]);
-                        }
-                        if (data.errors.customer_phone) {
-                            showError(phoneInput, errorPhone, data.errors.customer_phone[0]);
-                        }
-                    } else {
-                        alert(data.message || 'Terjadi kesalahan');
-                    }
+                    alert(data.message || 'Terjadi kesalahan');
                     resetButton();
                 }
             } catch (error) {

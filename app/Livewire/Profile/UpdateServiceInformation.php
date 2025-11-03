@@ -27,6 +27,8 @@ class UpdateServiceInformation extends Component
     public $delivery_days_max;
     public $is_active = true;
     public $service_image;
+    public $currentImageUrl;
+
 
     protected $rules = [
         'name' => 'required|string|max:255',
@@ -58,18 +60,21 @@ class UpdateServiceInformation extends Component
                 return;
             }
 
-            $this->editingServiceId = $serviceId;
-            $this->name = $service->name;
-            $this->description = $service->description;
-            $this->price = $service->price;
-            $this->unit = $service->unit;
-            $this->category_id = $service->category_id;
-            $this->consultation_link = $service->consultation_link;
+            $this->editingServiceId   = $serviceId;
+            $this->name               = $service->name;
+            $this->description        = $service->description;
+            $this->price              = $service->price;
+            $this->unit               = $service->unit;
+            $this->category_id        = $service->category_id;
+            $this->consultation_link  = $service->consultation_link;
             $this->has_brand_identity = $service->has_brand_identity;
-            $this->revision_max = $service->revision_max;
-            $this->delivery_days_min = $service->delivery_days_min;
-            $this->delivery_days_max = $service->delivery_days_max;
-            $this->is_active = $service->is_active;
+            $this->revision_max       = $service->revision_max;
+            $this->delivery_days_min  = $service->delivery_days_min;
+            $this->delivery_days_max  = $service->delivery_days_max;
+            $this->is_active          = $service->is_active;
+
+            // ⬅️ simpan URL gambar untuk dipakai di Blade
+            $this->currentImageUrl    = $service->image_url;
         }
 
         $this->showModal = true;
@@ -149,8 +154,10 @@ class UpdateServiceInformation extends Component
         $this->delivery_days_max = '';
         $this->is_active = true;
         $this->service_image = null;
+        $this->currentImageUrl = null; // ⬅️ reset
         $this->resetValidation();
     }
+
 
     public function render()
     {

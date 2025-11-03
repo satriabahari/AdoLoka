@@ -18,7 +18,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->string('slug')->unique();
 
-            $table->unsignedBigInteger('price');
+            $table->decimal('price', 12, 2)->default(0);
             $table->string('unit')->nullable();
             $table->string('consultation_link')->nullable();
             $table->boolean('has_brand_identity')->default(false);
