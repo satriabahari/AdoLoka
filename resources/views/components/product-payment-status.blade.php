@@ -103,14 +103,13 @@
                 <div class="border-t border-slate-200 pt-6 mb-6">
                     <div class="flex items-center justify-between mb-2">
                         <span class="text-slate-600">Subtotal</span>
-                        <span class="font-medium text-slate-800">
-                            Rp {{ number_format($order->total_price, 0, ',', '.') }}
-                        </span>
+                        <span class="font-medium text-slate-800">Rp
+                            {{ number_format((float) $order->total_amount, 0, ',', '.') }}</span>
                     </div>
                     <div
                         class="flex items-center justify-between text-xl font-bold text-sky-600 pt-4 border-t border-slate-200">
                         <span>Total</span>
-                        <span>{{ $order->formatted_total_price }}</span>
+                        <span>Rp {{ number_format((float) $order->total_amount, 0, ',', '.') }}</span>
                     </div>
                 </div>
 
