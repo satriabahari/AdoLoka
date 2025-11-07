@@ -19,6 +19,9 @@ class User extends Authenticatable implements FilamentUser, HasName, HasAvatar, 
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, InteractsWithMedia;
 
+    const ROLE_ADMIN = 1;
+    const ROLE_USER = 2;
+
     /**
      * The attributes that are mass assignable.
      *
@@ -74,9 +77,34 @@ class User extends Authenticatable implements FilamentUser, HasName, HasAvatar, 
         ];
     }
 
+    public function hasRole(string $roleName): bool
+    {
+        return $this->role && $this->role->name === $roleName;
+    }
+
+    /**
+     * Check if user is admin (role_id = 1)
+     *
+     * @return bool
+     */
+    public function isAdmin(): bool
+    {
+        return $this->role_id === self::ROLE_ADMIN;
+    }
+
+    /**
+     * Check if user is regular user (role_id = 2)
+     *
+     * @return bool
+     */
+    public function isUser(): bool
+    {
+        return $this->role_id === self::ROLE_USER;
+    }
+
     public function canAccessPanel(Panel $panel): bool
     {
-        return true; // atur sesuai kebijakanmu
+        return $this->isAdmin();
     }
 
     // 👇 Wajib return string (bukan null)

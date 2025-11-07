@@ -8,7 +8,7 @@
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">First Name</label>
                 <input type="text" wire:model.defer="first_name" placeholder="Satria"
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition">
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition">
                 @error('first_name')
                     <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span>
                 @enderror
@@ -16,7 +16,7 @@
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
                 <input type="text" wire:model.defer="last_name" placeholder="Bahari (Optional)"
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition">
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition">
                 @error('last_name')
                     <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span>
                 @enderror
@@ -28,7 +28,7 @@
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
                 <input type="email" wire:model.defer="email" placeholder="satria@gmail.com"
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition">
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition">
                 @error('email')
                     <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span>
                 @enderror
@@ -36,7 +36,7 @@
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
                 <input type="text" wire:model.defer="phone_number" placeholder="+628 atau 08"
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition">
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition">
                 @error('phone_number')
                     <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span>
                 @enderror
@@ -49,7 +49,7 @@
             <label class="block text-sm font-medium text-gray-700 mb-2">Password</label>
             <div class="relative">
                 <input type="password" id="password" wire:model.defer="password" placeholder="Password"
-                    class="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition">
+                    class="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition">
                 <button type="button" onclick="togglePassword('password')"
                     class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 password-toggle transition">
                     <i class="fas fa-eye-slash"></i>
@@ -66,7 +66,7 @@
             <div class="relative">
                 <input type="password" id="password_confirmation" wire:model.defer="password_confirmation"
                     placeholder="password"
-                    class="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition">
+                    class="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition">
                 <button type="button" onclick="togglePassword('password_confirmation')"
                     class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 password-toggle transition">
                     <i class="fas fa-eye-slash"></i>
@@ -80,11 +80,11 @@
         <!-- Terms & Conditions -->
         <div class="flex items-start pt-2">
             <input type="checkbox" wire:model.defer="agree_terms" id="agree_terms"
-                class="mt-1 w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary cursor-pointer">
+                class="mt-1 w-4 h-4 text-primary-500 border-gray-300 rounded focus:ring-primary-500 cursor-pointer">
             <label for="agree_terms" class="ml-3 text-sm text-gray-600 select-none">
-                I agree to all the <span class="text-primary hover:text-primary-dark font-medium">Terms</span>
+                I agree to all the <span class="text-primary-500 hover:text-primary-600 font-medium">Terms</span>
                 and
-                <span class="text-primary hover:text-primary-dark font-medium">Privacy Policies</span>
+                <span class="text-primary-500 hover:text-primary-600 font-medium">Privacy Policies</span>
             </label>
         </div>
         @error('agree_terms')
@@ -93,14 +93,14 @@
 
         <!-- Submit Button -->
         <button type="submit"
-            class="w-full bg-primary hover:bg-primary-dark text-white font-semibold py-3.5 rounded-lg transition duration-200 shadow-sm hover:shadow-md mt-6">
+            class="w-full bg-primary-500 hover:bg-primary-600 text-white font-semibold py-3.5 rounded-lg transition duration-200 shadow-sm hover:shadow-md mt-6">
             Selanjutnya
         </button>
 
         <!-- Login Link -->
         <p class="text-center text-sm text-gray-600 pt-2">
             Already have an account? <a href="/login"
-                class="text-primary hover:text-primary-dark font-medium">Login</a>
+                class="text-primary-500 hover:text-primary-600 font-medium">Login</a>
         </p>
 
         <!-- Divider -->
