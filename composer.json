@@ -11,6 +11,7 @@
         "blade-ui-kit/blade-icons": "^1.8",
         "davidhsianturi/blade-bootstrap-icons": "^2.1",
         "filament/filament": "^4.1",
+        "filament/spatie-laravel-media-library-plugin": "^4.0",
         "hasnayeen/blade-eva-icons": "^2.1",
         "laravel/framework": "^12.0",
         "laravel/socialite": "^5.23",
