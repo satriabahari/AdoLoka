@@ -67,14 +67,15 @@
                 <!-- Product Details -->
                 <div class="border-t border-slate-200 pt-6 mb-6">
                     <h2 class="text-lg font-bold text-slate-800 mb-4">Detail Produk</h2>
-                    <div class="bg-sky-50 rounded-lg p-4">
+                    <div class="bg-primary-50 rounded-lg p-4">
                         <div class="flex items-start gap-4">
                             <div class="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
                                 <img src="{{ $order->product->image_url }}" alt="{{ $order->product->name }}"
                                     class="w-full h-full object-cover">
                             </div>
                             <div class="flex-1">
-                                <span class="text-xs font-semibold text-sky-600 bg-sky-100 px-2 py-1 rounded-full">
+                                <span
+                                    class="text-xs font-semibold text-primary-600 bg-primary-100 px-2 py-1 rounded-full">
                                     {{ $order->product->category->name }}
                                 </span>
                                 <h3 class="font-bold text-slate-800 mt-2 mb-1">{{ $order->product->name }}</h3>
@@ -107,7 +108,7 @@
                             {{ number_format((float) $order->total_amount, 0, ',', '.') }}</span>
                     </div>
                     <div
-                        class="flex items-center justify-between text-xl font-bold text-sky-600 pt-4 border-t border-slate-200">
+                        class="flex items-center justify-between text-xl font-bold text-primary-600 pt-4 border-t border-slate-200">
                         <span>Total</span>
                         <span>Rp {{ number_format((float) $order->total_amount, 0, ',', '.') }}</span>
                     </div>
@@ -175,7 +176,7 @@
                 <!-- Action Buttons -->
                 <div class="flex flex-col sm:flex-row gap-3">
                     <a href="{{ route('products.index') }}"
-                        class="flex-1 px-6 py-3 bg-sky-600 hover:bg-sky-700 text-white rounded-lg font-medium transition-colors text-center">
+                        class="flex-1 px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-lg font-medium transition-colors text-center">
                         Lihat Produk Lain
                     </a>
 

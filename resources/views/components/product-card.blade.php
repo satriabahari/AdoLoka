@@ -14,11 +14,11 @@
         </div>
 
         <div class="p-4">
-            <h3 class="font-semibold text-slate-800 truncate mb-2 group-hover:text-sky-700">
+            <h3 class="font-semibold text-slate-800 truncate mb-2 group-hover:text-primary-700">
                 {{ $product->name }}
             </h3>
 
-            <p class="text-sky-700 font-semibold">
+            <p class="text-primary-700 font-semibold">
                 Rp{{ number_format($product->price, 0, ',', '.') }}
             </p>
         </div>

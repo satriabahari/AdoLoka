@@ -10,14 +10,14 @@
 
                 <div class="space-y-2">
                     <label class="flex items-center gap-3 cursor-pointer">
-                        <input type="radio" name="category" class="size-4 text-sky-700" wire:model.live="categoryId"
+                        <input type="radio" name="category" class="size-4 text-primary-700" wire:model.live="categoryId"
                             value="">
                         <span class="text-sm">Semua</span>
                     </label>
 
                     @foreach ($categories as $cat)
                         <label class="flex items-center gap-3 cursor-pointer">
-                            <input type="radio" name="category" class="size-4 text-sky-700"
+                            <input type="radio" name="category" class="size-4 text-primary-700"
                                 wire:model.live="categoryId" value="{{ $cat->id }}">
                             <span class="text-sm">{{ $cat->name }}</span>
                         </label>
@@ -32,7 +32,7 @@
         {{-- Search bar --}}
         <div class="mb-4">
             <input wire:model.debounce.400ms="search" type="text" placeholder="Cari produk…"
-                class="w-full rounded-full border px-5 py-3 text-sm border-gray-200 focus:ring-2 focus:ring-sky-400 focus:outline-none">
+                class="w-full rounded-full border px-5 py-3 text-sm border-gray-200 focus:ring-2 focus:ring-primary-400 focus:outline-none">
         </div>
 
         {{-- Grid produk --}}

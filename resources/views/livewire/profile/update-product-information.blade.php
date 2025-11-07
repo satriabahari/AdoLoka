@@ -13,7 +13,7 @@
 
     <div
         class="rounded-2xl bg-white/95 backdrop-blur ring-1 ring-gray-200 shadow-[0_16px_40px_rgba(17,65,119,0.15)] overflow-hidden">
-        <div class="bg-gradient-to-r from-sky-500 to-sky-600 px-6 py-4">
+        <div class="bg-gradient-to-r from-primary-500 to-primary-600 px-6 py-4">
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
@@ -24,7 +24,7 @@
                     </div>
                     <div>
                         <h2 class="text-xl font-bold text-white">Produk</h2>
-                        <p class="text-sm text-sky-200">Transaksi pembelian Anda</p>
+                        <p class="text-sm text-primary-200">Transaksi pembelian Anda</p>
                     </div>
                 </div>
             </div>
@@ -42,7 +42,7 @@
                         <div class="flex-1">
                             <h4 class="font-semibold text-gray-900">{{ $product->name }}</h4>
                             <p class="text-sm text-gray-600 line-clamp-2">{{ $product->description }}</p>
-                            <p class="text-sm text-sky-600 font-medium mt-1">Rp
+                            <p class="text-sm text-primary-600 font-medium mt-1">Rp
                                 {{ number_format($product->price, 0, ',', '.') }}</p>
                         </div>
 
@@ -60,7 +60,7 @@
 
             <!-- Tombol Tambah Product -->
             <button wire:click="openModal"
-                class="w-full py-3 rounded-lg bg-sky-600 hover:bg-sky-700 text-white font-medium transition">
+                class="w-full py-3 rounded-lg bg-primary-600 hover:bg-primary-700 text-white font-medium transition">
                 + Tambah Produk
             </button>
         </div>
@@ -89,7 +89,7 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Gambar Produk</label>
                             <input type="file" wire:model="product_image" accept="image/*"
-                                class="w-full rounded-lg border-gray-300 focus:ring-sky-500 focus:border-sky-500">
+                                class="w-full rounded-lg border-gray-300 focus:ring-primary-500 focus:border-primary-500">
                             @error('product_image')
                                 <p class="text-xs text-red-600 mt-1">{{ $message }}</p>
                             @enderror
@@ -116,7 +116,7 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Nama Produk</label>
                             <input type="text" wire:model="name"
-                                class="w-full rounded-lg border-gray-300 focus:ring-sky-500 focus:border-sky-500">
+                                class="w-full rounded-lg border-gray-300 focus:ring-primary-500 focus:border-primary-500">
                             @error('name')
                                 <p class="text-xs text-red-600 mt-1">{{ $message }}</p>
                             @enderror
@@ -126,7 +126,7 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Deskripsi</label>
                             <textarea wire:model="description" rows="3"
-                                class="w-full rounded-lg border-gray-300 focus:ring-sky-500 focus:border-sky-500"></textarea>
+                                class="w-full rounded-lg border-gray-300 focus:ring-primary-500 focus:border-primary-500"></textarea>
                             @error('description')
                                 <p class="text-xs text-red-600 mt-1">{{ $message }}</p>
                             @enderror
@@ -136,7 +136,7 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Kategori</label>
                             <select wire:model="category_id"
-                                class="w-full rounded-lg border-gray-300 focus:ring-sky-500 focus:border-sky-500">
+                                class="w-full rounded-lg border-gray-300 focus:ring-primary-500 focus:border-primary-500">
                                 <option value="">Pilih Kategori</option>
                                 @foreach ($categories as $category)
                                     <option value="{{ $category->id }}">{{ $category->name }}</option>
@@ -152,7 +152,7 @@
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Harga</label>
                                 <input type="number" wire:model="price" step="0.01"
-                                    class="w-full rounded-lg border-gray-300 focus:ring-sky-500 focus:border-sky-500">
+                                    class="w-full rounded-lg border-gray-300 focus:ring-primary-500 focus:border-primary-500">
                                 @error('price')
                                     <p class="text-xs text-red-600 mt-1">{{ $message }}</p>
                                 @enderror
@@ -161,7 +161,7 @@
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Stok</label>
                                 <input type="number" wire:model="stock"
-                                    class="w-full rounded-lg border-gray-300 focus:ring-sky-500 focus:border-sky-500">
+                                    class="w-full rounded-lg border-gray-300 focus:ring-primary-500 focus:border-primary-500">
                                 @error('stock')
                                     <p class="text-xs text-red-600 mt-1">{{ $message }}</p>
                                 @enderror
@@ -171,7 +171,7 @@
                         <!-- Is Active -->
                         <div class="flex items-center gap-2">
                             <input type="checkbox" wire:model="is_active" id="is_active"
-                                class="rounded border-gray-300 text-sky-600 focus:ring-sky-500">
+                                class="rounded border-gray-300 text-primary-600 focus:ring-primary-500">
                             <label for="is_active" class="text-sm text-gray-700">Produk Aktif</label>
                         </div>
 
@@ -193,7 +193,7 @@
                                     Batal
                                 </button>
                                 <button type="submit"
-                                    class="px-4 py-2 rounded-lg bg-sky-600 hover:bg-sky-700 text-white text-sm font-medium">
+                                    class="px-4 py-2 rounded-lg bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium">
                                     Simpan
                                 </button>
                             </div>

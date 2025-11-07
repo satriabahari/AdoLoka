@@ -2,7 +2,7 @@
     <div class="max-w-5xl mx-auto pt-12 px-4">
         <!-- Back Button -->
         <button onclick="window.history.back()"
-            class="flex items-center gap-2 text-sky-600 hover:text-sky-700 transition-colors mb-8">
+            class="flex items-center gap-2 text-primary-600 hover:text-primary-700 transition-colors mb-8">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
             </svg>
@@ -15,14 +15,14 @@
                 <!-- Product Image -->
                 <div class="space-y-4">
                     <div
-                        class="relative h-96 rounded-2xl overflow-hidden bg-gradient-to-br from-sky-100 to-sky-200 group">
+                        class="relative h-96 rounded-2xl overflow-hidden bg-gradient-to-br from-primary-100 to-primary-200 group">
                         <img src="{{ $product->image_url }}" alt="{{ $product->name }}"
                             class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
 
                         <!-- Category Badge -->
                         <div class="absolute top-4 left-4">
                             <span
-                                class="px-4 py-2 bg-white/90 backdrop-blur-sm text-sky-600 rounded-full text-sm font-semibold shadow-lg">
+                                class="px-4 py-2 bg-white/90 backdrop-blur-sm text-primary-600 rounded-full text-sm font-semibold shadow-lg">
                                 {{ $product->category->name }}
                             </span>
                         </div>
@@ -42,9 +42,9 @@
 
                     <!-- UMKM Info -->
                     @if ($product->umkm)
-                        <div class="bg-sky-50 rounded-xl p-4 border-2 border-sky-100">
-                            <p class="text-xs text-sky-600 font-semibold mb-1">Dijual oleh</p>
-                            <h3 class="text-lg font-bold text-sky-900">{{ $product->umkm->name }}</h3>
+                        <div class="bg-primary-50 rounded-xl p-4 border-2 border-primary-100">
+                            <p class="text-xs text-primary-600 font-semibold mb-1">Dijual oleh</p>
+                            <h3 class="text-lg font-bold text-primary-900">{{ $product->umkm->name }}</h3>
                             @if ($product->umkm->address)
                                 <p class="text-sm text-slate-600 mt-1">{{ $product->umkm->address }}</p>
                             @endif
@@ -60,9 +60,10 @@
                     </div>
 
                     <!-- Price & Stock -->
-                    <div class="bg-gradient-to-br from-sky-50 to-sky-100 rounded-xl p-6 border-2 border-sky-200">
+                    <div
+                        class="bg-gradient-to-br from-primary-50 to-primary-100 rounded-xl p-6 border-2 border-primary-200">
                         <p class="text-sm text-slate-600 mb-2">Harga</p>
-                        <p class="text-4xl font-bold text-sky-600 mb-4">
+                        <p class="text-4xl font-bold text-primary-600 mb-4">
                             Rp {{ number_format($product->price, 0, ',', '.') }}
                         </p>
                         <div class="flex items-center gap-2 text-sm">
@@ -72,7 +73,7 @@
                                     d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                             </svg>
                             <span class="text-slate-600">Stok tersedia: <strong
-                                    class="text-sky-600">{{ $product->stock }}</strong></span>
+                                    class="text-primary-600">{{ $product->stock }}</strong></span>
                         </div>
                     </div>
 
@@ -83,8 +84,8 @@
                             <div
                                 class="flex items-center gap-2 bg-white rounded-lg shadow-md border-2 border-slate-200">
                                 <button type="button" id="decrease-qty"
-                                    class="px-4 py-3 hover:bg-sky-50 rounded-l-lg transition-colors">
-                                    <svg class="w-5 h-5 text-sky-600" fill="none" stroke="currentColor"
+                                    class="px-4 py-3 hover:bg-primary-50 rounded-l-lg transition-colors">
+                                    <svg class="w-5 h-5 text-primary-600" fill="none" stroke="currentColor"
                                         viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M20 12H4" />
@@ -95,8 +96,8 @@
                                     class="w-20 text-center font-bold text-xl text-slate-800 border-0 focus:ring-0"
                                     readonly>
                                 <button type="button" id="increase-qty"
-                                    class="px-4 py-3 hover:bg-sky-50 rounded-r-lg transition-colors">
-                                    <svg class="w-5 h-5 text-sky-600" fill="none" stroke="currentColor"
+                                    class="px-4 py-3 hover:bg-primary-50 rounded-r-lg transition-colors">
+                                    <svg class="w-5 h-5 text-primary-600" fill="none" stroke="currentColor"
                                         viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M12 4v16m8-8H4" />
@@ -105,7 +106,7 @@
                             </div>
                             <div class="flex-1">
                                 <p class="text-sm text-slate-600">Total Harga</p>
-                                <p id="total-price" class="text-2xl font-bold text-sky-600">
+                                <p id="total-price" class="text-2xl font-bold text-primary-600">
                                     Rp {{ number_format($product->price, 0, ',', '.') }}
                                 </p>
                             </div>
@@ -116,14 +117,14 @@
                     <div class="bg-slate-50 rounded-xl p-6">
                         <label class="block text-sm font-medium text-slate-700 mb-2">Catatan Pesanan (Opsional)</label>
                         <textarea id="customer-notes" rows="3"
-                            class="w-full px-4 py-3 border-2 border-slate-300 rounded-lg focus:ring-4 focus:ring-sky-100 focus:border-sky-500 transition-all"
+                            class="w-full px-4 py-3 border-2 border-slate-300 rounded-lg focus:ring-4 focus:ring-primary-100 focus:border-primary-500 transition-all"
                             placeholder="Tambahkan catatan untuk pesanan Anda"></textarea>
                     </div>
 
                     <!-- CTA Buttons -->
                     <div class="flex gap-3">
                         <button id="buy-now-btn" {{ $product->stock == 0 ? 'disabled' : '' }}
-                            class="flex-1 px-8 py-4 bg-sky-600 hover:bg-sky-700 text-white rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center gap-2 disabled:bg-slate-400 disabled:cursor-not-allowed">
+                            class="flex-1 px-8 py-4 bg-primary-600 hover:bg-primary-700 text-white rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center gap-2 disabled:bg-slate-400 disabled:cursor-not-allowed">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
